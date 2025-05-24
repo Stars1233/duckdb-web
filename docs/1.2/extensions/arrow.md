@@ -1,8 +1,6 @@
 ---
 github_repository: https://github.com/duckdb/arrow
 layout: docu
-redirect_from:
-- /docs/extensions/arrow
 title: Arrow Extension
 ---
 

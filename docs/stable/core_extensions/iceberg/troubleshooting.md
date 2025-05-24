@@ -1,7 +1,9 @@
 ---
 layout: docu
-redirect_from: null
 title: Troubleshooting
+redirect_from:
+- /docs/stable/extensions/iceberg/troubleshooting
+- /docs/stable/extensions/iceberg/troubleshooting/
 ---
 
 ## Limitations

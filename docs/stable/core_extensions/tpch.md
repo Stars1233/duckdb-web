@@ -1,8 +1,10 @@
 ---
 github_directory: https://github.com/duckdb/duckdb/tree/main/extension/tpch
 layout: docu
-redirect_from: null
 title: TPC-H Extension
+redirect_from:
+- /docs/stable/extensions/tpch
+- /docs/stable/extensions/tpch/
 ---
 
 The `tpch` extension implements the data generator and queries for the [TPC-H benchmark](https://www.tpc.org/tpch/).

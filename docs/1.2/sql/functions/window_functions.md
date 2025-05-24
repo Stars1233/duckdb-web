@@ -1,10 +1,6 @@
 ---
 layout: docu
 railroad: expressions/window.js
-redirect_from:
-- /docs/sql/window_functions
-- /docs/sql/window_functions/
-- /docs/sql/functions/window_functions
 title: Window Functions
 ---
 

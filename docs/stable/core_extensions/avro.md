@@ -1,11 +1,15 @@
 ---
 github_repository: https://github.com/duckdb/duckdb-avro
 layout: docu
-redirect_from: null
 title: Avro Extension
+redirect_from:
+- /docs/stable/extensions/avro
+- /docs/stable/extensions/avro/
 ---
 
 The `avro` extension enables DuckDB to read [Apache Avro](https://avro.apache.org) files.
+
+> The `avro` extensions was [released as a community extension in late 2024]({% post_url 2024-12-09-duckdb-avro-extension %}) and became a core extension in early 2025.
 
 ## The `read_avro` Function
 
