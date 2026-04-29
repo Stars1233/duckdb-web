@@ -24,7 +24,7 @@ on those with extended functionality, and even more performance gains!
 ### Building Up the Delta (Lake): Writes
 
 What fun are reads without writes? The big addition since we last chatted is
-`INSERT` support! It works as simply as you expect. Let's assume you have a delta
+`INSERT` support! It works as simply as you expect. Let's assume you have a Delta
 table ready to go. `INSERT` away, it's that simple:
 
 ```sql
@@ -80,7 +80,7 @@ reference that never changes, regardless of future writes:
 ATTACH './path/to/my_table' AS my_table_v1
     (TYPE delta, VERSION 1);
 
-SELECT count() FROM my_table_v1;   -- → 3
+SELECT count() FROM my_table_v1;      -- → 3
 
 -- Locked to whatever was latest at attach time
 ATTACH './path/to/my_table' AS my_table_pinned
@@ -100,7 +100,7 @@ SELECT count() FROM t;  -- → 17
 
 And now some work needs to be done against version 20. If we peek under the
 hood (warning: sneaky code follows), we'll see that none of the previously
-loaded delta log metadata files were re-loaded:
+loaded Delta log metadata files were re-loaded:
 
 ```sql
 SET enable_logging = true;
@@ -122,16 +122,26 @@ WHERE type = 'DeltaKernel'
 ```
 
 In Delta lakes with thousands or millions of snapshots, incremental loading
-provides a big win when working across multiple versions. (Note: At time of
-writing, incremental snapshot loading is supported in nightly builds, and will
-be included in the next release, [v1.5.3]({% link release_calendar.md %}).)
+provides a big win when working across multiple versions.
 
-### Growing Up: No Longer a [Kit](https://duckduckgo.com/?q=what+is+a+baby+beaver+called%3F)
+> At time of writing, incremental snapshot loading is supported in nightly builds.
+> You can install it using:
+>
+> ```sql
+> FORCE INSTALL delta FROM core_nightly;
+> ```
+>
+> Please be aware that nightly builds are not intended for production use.
+> The implementation will be included in the next stable release,
+> [v1.5.3]({% link release_calendar.md %}).
 
-The DuckDB Delta extension has grown up quite a bit since a year ago. Atop
-previous performance improvements, it now supports writes and time travel. So,
-we got rid of the experimental tag! And even better, all these features open
-the door to something bigger: Unity Catalog coordination.
+### Growing Up: No Longer a Kit
+
+The DuckDB Delta extension is no longer a
+[kit](https://duckduckgo.com/?q=what+is+a+baby+beaver+called) and has grown
+up quite a bit since a year ago.
+As you just saw, we added writes and time travel. These features open the
+door to something bigger: Unity Catalog coordination.
 
 ## Unity Catalog Support atop the Delta
 
