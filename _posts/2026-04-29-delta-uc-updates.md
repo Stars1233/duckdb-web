@@ -11,9 +11,9 @@ image:
 Welcome back! While we here at DuckDB Labs are typically of the quacking
 persuasion, we’ve been busy as beavers, shoring up our Delta to prepare for
 what’s next… Unity Catalog! Let’s look at how DuckDB’s Delta and Unity Catalog
-extensions have grown up - enough to shed the experimental tag - and see what
+extensions have grown up – enough to shed the experimental tag – and see what
 has changed since our [last
-update](https://duckdb.org/2025/03/21/maximizing-your-delta-scan-performance).
+update]({% post_url 2025-03-21-maximizing-your-delta-scan-performance %}).
 
 ## Time to Open the Delta
 
@@ -24,8 +24,8 @@ on those with extended functionality, and even more performance gains!
 ### Building Up the Delta (Lake): Writes
 
 What fun are reads without writes? The big addition since we last chatted is
-INSERT support! It works as simply as you expect. Let's assume you have a delta
-table ready to go. INSERT away, it's that simple:
+`INSERT` support! It works as simply as you expect. Let's assume you have a delta
+table ready to go. `INSERT` away, it's that simple:
 
 ```sql
 -- Schema: (text VARCHAR, code BIGINT)
@@ -37,7 +37,7 @@ INSERT INTO my_table VALUES ('Question 2', 2), ('The Answer', 42);
 INSERT INTO my_table FROM (SELECT text || ' (copy)', code + 100 FROM my_table);
 ```
 
-Also worth calling out - multiple INSERTs within a `BEGIN`/`COMMIT` block are
+Also worth calling out – multiple `INSERT`s within a `BEGIN`/`COMMIT` block are
 stored as a single Delta version: one atomic commit, one new log entry. And,
 as you'll see later, this works with catalogs too! UPDATE, MERGE, and DELETE
 are not yet supported, but squarely in our
@@ -143,7 +143,7 @@ deeper; the concepts apply broadly regardless of which catalog you use.
 Unity Catalog (UC for short) is an open standard for governing data and AI
 assets — tables, volumes, models, and functions — across engines and clouds. It
 gives you a single place to discover, audit, and control access to your data,
-regardless of what's reading or writing it. There are two main flavours: OSS
+regardless of what's reading or writing it. There are two main flavors: OSS
 Unity Catalog, which you can self-host (and Docker-ify in minutes), and
 Databricks Unity Catalog, the managed version. Like Delta, the DuckDB Unity
 Catalog extension has shed its experimental tag — let's put both to work.
@@ -197,14 +197,14 @@ SELECT name, age, adopted FROM my_catalog.pets ORDER BY name;
 
 That's it — you just queried Unity-Catalog-managed, Delta-stored pets data.
 
-Next let's complete the circle and write some data into our pets table:
+Next, let's complete the circle and write some data into our pets table:
 
 ```sql
 INSERT INTO my_catalog.pets (uuid, name, age, adopted)
 SELECT
     gen_random_uuid()::VARCHAR,
-    ['Luna','Milo','Bella','Charlie','Max','Lucy','Cooper','Daisy','Buddy','Lily',
-     'Rocky','Molly','Bear','Lola','Duke','Sadie','Tucker','Zoe','Oliver','Stella'][1 + (random() * 19)::INT],
+    ['Luna', 'Milo', 'Bella', 'Charlie', 'Max', 'Lucy', 'Cooper', 'Daisy', 'Buddy', 'Lily',
+     'Rocky', 'Molly', 'Bear', 'Lola', 'Duke', 'Sadie', 'Tucker', 'Zoe', 'Oliver', 'Stella'][1 + (random() * 19)::INT],
     (1 + (random() * 14)::INT)::INT,
     random() > 0.5
 FROM range(10);
@@ -213,11 +213,14 @@ SELECT count() FROM my_catalog.pets;
 ```
 
 You can also easily find and see the created files; check `data`
-(bind-mounted in docker), and you should find both existing files, and 1 new
+(bind-mounted in Docker), and you should find both existing files, and 1 new
 parquet file containing the new rows. In my case it looks like this:
 
-```bash
-$ tree data
+```batch
+tree data
+```
+
+```text
 data
 └── external
     └── unity
@@ -277,7 +280,7 @@ TBLPROPERTIES ('delta.feature.catalogManaged' = 'supported');
 ```
 
 Once CMC-enabled, DuckDB writes go through UC's commit staging automatically —
-the INSERT syntax is unchanged:
+the `INSERT` syntax is unchanged:
 
 ```sql
 INSERT INTO my_catalog.my_schema.concurrent_tbl (uuid, name, age, adopted)
@@ -331,7 +334,7 @@ SELECT count() AS total_rows FROM my_catalog.my_schema.concurrent_tbl;
 ```
 
 10 seeded rows + (5 writes × 5 rows each) = 35 total rows. Successful
-concurrent writes. In a real workload you would retry the
+concurrent writes. In a real workload, you would retry the
 conflicted writes and land all 20 inserts.
 
 ## Conclusions
