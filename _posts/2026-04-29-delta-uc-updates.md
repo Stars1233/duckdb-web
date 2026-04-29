@@ -150,12 +150,12 @@ Catalog extension has shed its experimental tag — let's put both to work.
 
 ### Getting Started: OSS Unity Catalog
 
-We've put together a playground Docker image — OSS Unity Catalog and DuckDB
-bundled together — so you can follow along without any setup beyond `docker run`.
-Grab it [here](https://github.com/benfleis/duckdb-unitycatalog-playground/),
-and get it running if you would like to walk through the samples or experiment on
-your own. (If you'd prefer to run OSS UC directly, the official image is the
-upstream of our playground.)
+We've put together a [playground Docker image — OSS Unity Catalog and DuckDB
+bundled together](https://github.com/benfleis/duckdb-unitycatalog-playground/),
+so you can follow along without any setup beyond docker build-and-run. Grab it
+if you would like to walk through the samples or experiment on your own. (If
+you'd prefer to run OSS UC directly, the official image is the upstream of our
+playground.)
 
 Let's start with Docker. Assuming you now have the image running, it
 already executed (roughly) the following steps in the build phase to prepare
@@ -167,14 +167,14 @@ our playground:
 
 # Create the "pets" table
 /home/unitycatalog/bin/uc table create \
-    --full_name        my_catalog.my_schema.pets \
+    --full_name        unity.my_schema.pets \
     --columns          "uuid STRING, name STRING, age INT, adopted BOOLEAN" \
     --format           DELTA \
-    --storage_location file:///home/unitycatalog/etc/data/external/my_catalog/my_schema/tables/pets
+    --storage_location file:///home/unitycatalog/etc/data/external/unity/my_schema/tables/pets
 ```
 
 After that, we can test things out from DuckDB. To see for
-yourself, `docker exec -it uc-playground duckdb` will give you a DuckDB shell
+yourself, `docker exec -it duckdb-playground duckdb` will give you a DuckDB shell
 inside the container.
 
 Before doing anything meaningful we'll need to set up a secret. In this case
@@ -191,7 +191,8 @@ CREATE SECRET (
 
 ATTACH 'unity' AS my_catalog (TYPE unity_catalog, DEFAULT_SCHEMA 'my_schema');
 
-SELECT name, age, adopted FROM my_catalog.pets ORDER BY name LIMIT 3;
+SELECT name, age, adopted FROM my_catalog.pets ORDER BY name;
+-- -> single 'Seed' row
 ```
 
 That's it — you just queried Unity-Catalog-managed, Delta-stored pets data.
@@ -236,8 +237,9 @@ data
 ### Managing the Stream: Catalog Managed Commits
 
 With the basics out of the way, we can talk about Catalog Managed Commits
-(CMC). This is available today in both [OSS](#link) and
-[Databricks](#link) Unity Catalog.
+(CMC). This is available today in both [OSS](https://www.unitycatalog.io/) and
+[Databricks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+Unity Catalog.
 
 The headline feature is catalog-coordinated concurrent writes. Without CMC,
 DuckDB writes go directly to the Delta log — and while modern storage backends
