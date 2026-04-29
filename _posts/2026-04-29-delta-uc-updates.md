@@ -31,15 +31,17 @@ table ready to go. `INSERT` away, it's that simple:
 -- Schema: (text VARCHAR, code BIGINT)
 ATTACH './path/to/my_table' AS my_table (TYPE delta);
 
-INSERT INTO my_table VALUES ('Question 2', 2), ('The Answer', 42);
+INSERT INTO my_table
+VALUES ('Question 2', 2), ('The Answer', 42);
 
 -- Bulk insert from a query
-INSERT INTO my_table FROM (SELECT text || ' (copy)', code + 100 FROM my_table);
+INSERT INTO my_table
+FROM (SELECT text || ' (copy)', code + 100 FROM my_table);
 ```
 
 Also worth calling out – multiple `INSERT`s within a `BEGIN`/`COMMIT` block are
 stored as a single Delta version: one atomic commit, one new log entry. And,
-as you'll see later, this works with catalogs too! UPDATE, MERGE, and DELETE
+as you'll see later, this works with catalogs too! `UPDATE`, `MERGE`, and `DELETE`
 are not yet supported, but squarely in our
 future work list.
 
@@ -65,9 +67,9 @@ most flexible approach:
 ```sql
 ATTACH './path/to/my_table' AS my_table (TYPE delta);
 
-SELECT count() FROM my_table AT (VERSION => 0);  -- → 1  (Question 1 only)
-SELECT count() FROM my_table AT (VERSION => 1);  -- → 3  (after first insert)
-SELECT count() FROM my_table;                    -- → 6  (latest)
+SELECT count() FROM my_table AT (VERSION => 0); -- 1  (Question 1 only)
+SELECT count() FROM my_table AT (VERSION => 1); -- 3  (after 1st insert)
+SELECT count() FROM my_table;                   -- 6  (latest)
 ```
 
 Or attach, pinned to a specific version, which is useful when you want a stable
@@ -75,11 +77,15 @@ reference that never changes, regardless of future writes:
 
 ```sql
 -- Always v1, no matter what gets written later
-ATTACH './path/to/my_table' AS my_table_v1 (TYPE delta, VERSION 1);
+ATTACH './path/to/my_table' AS my_table_v1
+    (TYPE delta, VERSION 1);
+
 SELECT count() FROM my_table_v1;   -- → 3
 
 -- Locked to whatever was latest at attach time
-ATTACH './path/to/my_table' AS my_table_pinned (TYPE delta, PIN_SNAPSHOT);
+ATTACH './path/to/my_table' AS my_table_pinned
+    (TYPE delta, PIN_SNAPSHOT);
+
 SELECT count() FROM my_table_pinned;  -- → 6
 ```
 
@@ -104,20 +110,21 @@ CALL enable_logging('DeltaKernel', level = 'trace');
 ATTACH './path/to/table' AS t (TYPE delta, VERSION 20);
 SELECT count() FROM t;  -- → 21
 
--- Delta kernel logs 'Provisionally selecting ... <version>.json' whenever it reads
--- a log file from scratch. We search for any such message referencing a
--- zero-padded log filename — zero matches means the cached v16 snapshot was
--- extended incrementally rather than rebuilt.
+-- Delta kernel logs 'Provisionally selecting ... <version>.json'
+-- whenever it reads a log file from scratch. We search for any such
+-- message referencing a zero-padded log filename — zero matches
+-- means the cached v16 snapshot was extended incrementally rather
+-- than rebuilt.
 SELECT count() FROM duckdb_logs
 WHERE type = 'DeltaKernel'
   AND message LIKE '%00000000000000000%.json%';
 -- → 0
 ```
 
-In delta lakes with thousands or millions of snapshots, incremental loading
+In Delta lakes with thousands or millions of snapshots, incremental loading
 provides a big win when working across multiple versions. (Note: At time of
 writing, incremental snapshot loading is supported in nightly builds, and will
-be included in the next release, v1.5.3.)
+be included in the next release, [v1.5.3]({% link release_calendar.md %}).)
 
 ### Growing Up: No Longer a [Kit](https://duckduckgo.com/?q=what+is+a+baby+beaver+called%3F)
 
@@ -189,10 +196,11 @@ CREATE SECRET (
     ENDPOINT 'http://unitycatalog:8080'
 );
 
-ATTACH 'unity' AS my_catalog (TYPE unity_catalog, DEFAULT_SCHEMA 'my_schema');
+ATTACH 'unity' AS my_catalog
+    (TYPE unity_catalog, DEFAULT_SCHEMA 'my_schema');
 
 SELECT name, age, adopted FROM my_catalog.pets ORDER BY name;
--- -> single 'Seed' row
+-- returns a single 'Seed' row
 ```
 
 That's it — you just queried Unity-Catalog-managed, Delta-stored pets data.
@@ -200,11 +208,14 @@ That's it — you just queried Unity-Catalog-managed, Delta-stored pets data.
 Next, let's complete the circle and write some data into our pets table:
 
 ```sql
-INSERT INTO my_catalog.pets (uuid, name, age, adopted)
+INSERT INTO my_catalog.pets
+    (uuid, name, age, adopted)
 SELECT
     gen_random_uuid()::VARCHAR,
-    ['Luna', 'Milo', 'Bella', 'Charlie', 'Max', 'Lucy', 'Cooper', 'Daisy', 'Buddy', 'Lily',
-     'Rocky', 'Molly', 'Bear', 'Lola', 'Duke', 'Sadie', 'Tucker', 'Zoe', 'Oliver', 'Stella'][1 + (random() * 19)::INT],
+    ['Luna', 'Milo', 'Bella', 'Charlie', 'Max', 'Lucy', 'Cooper',
+     'Daisy', 'Buddy', 'Lily', 'Rocky', 'Molly', 'Bear', 'Lola',
+     'Duke', 'Sadie', 'Tucker', 'Zoe', 'Oliver', 'Stella'
+    ][1 + (random() * 19)::INT],
     (1 + (random() * 14)::INT)::INT,
     random() > 0.5
 FROM range(10);
@@ -283,7 +294,8 @@ Once CMC-enabled, DuckDB writes go through UC's commit staging automatically —
 the `INSERT` syntax is unchanged:
 
 ```sql
-INSERT INTO my_catalog.my_schema.concurrent_tbl (uuid, name, age, adopted)
+INSERT INTO my_catalog.my_schema.concurrent_tbl
+    (uuid, name, age, adopted)
 VALUES (gen_random_uuid()::VARCHAR, 'Luna', 3, true);
 ```
 
@@ -295,8 +307,11 @@ retry.
 Let's put that to the test. We launched 20 competing DuckDB
 writers, 8 at a time, all inserting into the same CMC table:
 
-```bash
+```batch
 seq 1 20 | xargs -P 8 -I{} scripts/unity/05-cmc/write-single {}
+```
+
+```text
 [worker 6] OK — inserted 5 rows
 [worker 5] CONFLICT — another writer won this version, retry needed
 [worker 2] CONFLICT — another writer won this version, retry needed
@@ -325,6 +340,8 @@ successful insert landed exactly once:
 
 ```sql
 SELECT count() AS total_rows FROM my_catalog.my_schema.concurrent_tbl;
+```
+```text
 ┌────────────┐
 │ total_rows │
 │   int64    │
@@ -350,5 +367,3 @@ delete/update/merge support, and multi-table atomicity for writes that span
 more than one table. In the meantime, the playground image linked above has
 everything you need to kick the tires — and as always, feedback and bug reports
 are welcome on GitHub.
-
----
