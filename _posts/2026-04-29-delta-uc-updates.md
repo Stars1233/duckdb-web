@@ -10,7 +10,9 @@ image:
 
 Welcome back! While we here at DuckDB Labs are typically of the quacking
 persuasion, we’ve been busy as beavers, shoring up our Delta to prepare for
-what’s next… Unity Catalog! Let’s look at how DuckDB’s Delta and Unity Catalog
+what’s next… Unity Catalog! Let’s look at how DuckDB’s
+[Delta]({% link docs/current/core_extensions/delta.md %}) and
+[Unity Catalog]({% link docs/current/core_extensions/unity_catalog.md %})
 extensions have grown up – enough to shed the experimental tag – and see what
 has changed since our [last
 update]({% post_url 2025-03-21-maximizing-your-delta-scan-performance %}).
@@ -39,7 +41,7 @@ INSERT INTO my_table
 FROM (SELECT text || ' (copy)', code + 100 FROM my_table);
 ```
 
-Also worth calling out – multiple `INSERT`s within a `BEGIN`/`COMMIT` block are
+Also worth calling out – multiple `INSERT`s within a `BEGIN` / `COMMIT` block are
 stored as a single Delta version: one atomic commit, one new log entry. And,
 as you'll see later, this works with catalogs too! `UPDATE`, `MERGE`, and `DELETE`
 are not yet supported, but squarely in our
@@ -162,8 +164,8 @@ assets — tables, volumes, models, and functions — across engines and clouds.
 gives you a single place to discover, audit, and control access to your data,
 regardless of what's reading or writing it. There are two main flavors: OSS
 Unity Catalog, which you can self-host (and Docker-ify in minutes), and
-Databricks Unity Catalog, the managed version. Like Delta, the DuckDB Unity
-Catalog extension has shed its experimental tag — let's put both to work.
+Databricks Unity Catalog, the managed version. Like the Delta DuckDB extension,
+the UnityCatalog extension has shed its experimental tag — let's put both to work.
 
 ### Getting Started: OSS Unity Catalog
 
@@ -234,8 +236,8 @@ SELECT count() FROM my_catalog.pets;
 ```
 
 You can also easily find and see the created files; check `data`
-(bind-mounted in Docker), and you should find both existing files, and 1 new
-parquet file containing the new rows. In my case it looks like this:
+(bind-mounted in Docker), and you should find both existing files, and a new
+Parquet file containing the new rows. In my case it looks like this:
 
 ```batch
 tree data
@@ -283,11 +285,11 @@ A few things worth noting: consistent reads and audit history are already
 inherent to Delta and UC respectively — CMC doesn't add those, it just ensures
 UC stays in sync with every commit. And CMC coordinates commits per table;
 there is no cross-table atomicity. If you write to two tables in the same
-`BEGIN`/`COMMIT` block, each table commits independently.
+`BEGIN` / `COMMIT` block, each table commits independently.
 
 To opt a table into CMC, set the `delta.feature.catalogManaged` table property
-at creation time. This is done via Spark or the UC CLI — DuckDB does not yet
-support `CREATE TABLE` DDL:
+at creation time. This is done via Spark or the UC CLI — DuckDB's Unity Catalog
+extension does not yet support `CREATE TABLE` DDL:
 
 ```sql
 -- Via Spark
@@ -376,4 +378,4 @@ There's more to come: DDL support to create and manage tables directly,
 delete/update/merge support, and multi-table atomicity for writes that span
 more than one table. In the meantime, the playground image linked above has
 everything you need to kick the tires — and as always, feedback and bug reports
-are welcome on GitHub.
+are welcome on [GitHub](https://github.com/duckdb/duckdb-delta).
