@@ -4,8 +4,8 @@ title: "Delta Grows Up: Writes, Time Travel and Unity Catalog"
 author: "Ben Fleis"
 excerpt: "DuckDB's Delta and Unity Catalog extensions shed their experimental tags — now with writes, time travel, and catalog-managed commits."
 tags: ["extensions"]
-thumb:
-image:
+thumb: "/images/blog/thumbs/delta-uc-updates.svg"
+image: "/images/blog/thumbs/delta-uc-updates.jpg"
 ---
 
 Welcome back! While we here at DuckDB Labs are typically of the quacking
