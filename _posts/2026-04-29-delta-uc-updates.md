@@ -2,7 +2,7 @@
 layout: post
 title: "Delta Grows Up: Writes, Time Travel and Unity Catalog"
 author: "Ben Fleis"
-excerpt: "DuckDB's Delta and Unity Catalog extensions shed their experimental tags — now with writes, time travel, and catalog-managed commits."
+excerpt: "DuckDB's Delta and Unity Catalog extensions shed their experimental tags — now with writes, time travel, and catalog managed table support."
 tags: ["extensions"]
 thumb: "/images/blog/thumbs/delta-uc-updates.svg"
 image: "/images/blog/thumbs/delta-uc-updates.jpg"
@@ -18,6 +18,12 @@ has changed since our [last
 update]({% post_url 2025-03-21-maximizing-your-delta-scan-performance %}).
 
 ## Time to Open the Delta
+
+Before we jump in, let's review for a moment. Delta is a foundational [open
+table format and toolset](https://docs.delta.io/) for building and managing
+data lakes, related to Iceberg and other lakehouse formats. DuckDB supports
+Delta tables via its [Delta
+Extension](https://duckdb.org/docs/current/core_extensions/delta).
 
 In that last update we highlighted performance wins, particularly file skipping
 via filter pushdowns, and metadata caching with snapshot pinning. Now we build
@@ -161,11 +167,12 @@ deeper; the concepts apply broadly regardless of which catalog you use.
 
 Unity Catalog (UC for short) is an open standard for governing data and AI
 assets — tables, volumes, models, and functions — across engines and clouds. It
-gives you a single place to discover, audit, and control access to your data,
-regardless of what's reading or writing it. There are two main flavors: OSS
-Unity Catalog, which you can self-host (and Docker-ify in minutes), and
-Databricks Unity Catalog, the managed version. Like the Delta DuckDB extension,
-the UnityCatalog extension has shed its experimental tag — let's put both to work.
+turns your data lake into a lakehouse, and gives you a single place to
+discover, audit, and control access to your data, regardless of what's reading
+or writing it. There are two main flavors: OSS Unity Catalog, which you can
+self-host (and Docker-ify in minutes), and Databricks Unity Catalog, the
+managed version. Like the DuckDB Delta extension, the Unity Catalog extension
+has shed its experimental tag — let's put both to work.
 
 ### Getting Started: OSS Unity Catalog
 
@@ -260,20 +267,21 @@ data
 7 directories, 5 files
 ```
 
-### Managing the Stream: Catalog Managed Commits
 
-With the basics out of the way, we can talk about Catalog Managed Commits
-(CMC). This is available today in both [OSS](https://www.unitycatalog.io/) and
+### Managing the Stream: Catalog Managed Tables
+
+With the basics out of the way, we can talk about Catalog Managed Tables (CMT).
+This is available today in both [OSS](https://www.unitycatalog.io/) and
 [Databricks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
 Unity Catalog.
 
-The headline feature is catalog-coordinated concurrent writes. Without CMC,
+The big feature in CMT is coordinated concurrent writes. Without CMT,
 DuckDB writes go directly to the Delta log — and while modern storage backends
 prevent outright lost writes, UC is left out of the loop entirely. Its
 metadata, audit trail, and statistics fall out of sync with the actual table
 state, and other engines querying through UC may see a stale view.
 
-CMC fixes this: every write is staged and registered through UC before it
+CMT fixes this: every write is staged and registered through UC before it
 becomes visible. UC acts as the commit arbiter — a second writer arriving at
 the same version receives a conflict error and can cleanly retry. This
 matters wherever multiple DuckDB processes are appending simultaneously —
@@ -281,13 +289,13 @@ parallel ETL pipelines, partitioned bulk loads, concurrent analytical
 inserts. Each writer works independently; UC ensures exactly one commit
 lands per version and keeps its own catalog in sync with every one of them.
 
-A few things worth noting: consistent reads and audit history are already
-inherent to Delta and UC respectively — CMC doesn't add those, it just ensures
-UC stays in sync with every commit. And CMC coordinates commits per table;
-there is no cross-table atomicity. If you write to two tables in the same
-`BEGIN` / `COMMIT` block, each table commits independently.
+Consistent reads and audit history are already inherent to Delta and UC
+respectively — CMT doesn't add those, it just ensures UC stays in sync with
+every commit. And CMT coordinates commits per table; there is no cross-table
+atomicity. If you write to two tables in the same `BEGIN` / `COMMIT` block,
+each table commits independently.
 
-To opt a table into CMC, set the `delta.feature.catalogManaged` table property
+To opt a table into CMT, set the `delta.feature.catalogManaged` table property
 at creation time. This is done via Spark or the UC CLI — DuckDB's Unity Catalog
 extension does not yet support `CREATE TABLE` DDL:
 
@@ -302,7 +310,7 @@ CREATE TABLE my_catalog.my_schema.concurrent_tbl (
 TBLPROPERTIES ('delta.feature.catalogManaged' = 'supported');
 ```
 
-Once CMC-enabled, DuckDB writes go through UC's commit staging automatically —
+Once CMT-enabled, DuckDB writes go through UC's commit staging automatically —
 the `INSERT` syntax is unchanged:
 
 ```sql
@@ -316,8 +324,8 @@ registers it with UC before that data becomes visible. UC arbitrates: exactly
 one writer wins each version in a race, the rest get a conflict error and can
 retry.
 
-Let's put that to the test. We launched 20 competing DuckDB
-writers, 8 at a time, all inserting into the same CMC table:
+To test the feature, we launched 20 competing DuckDB
+writers, 8 at a time, all inserting into the same CMT table:
 
 ```batch
 seq 1 20 | xargs -P 8 -I{} scripts/unity/05-cmc/write-single {}
@@ -346,13 +354,13 @@ seq 1 20 | xargs -P 8 -I{} scripts/unity/05-cmc/write-single {}
 [worker 19] CONFLICT — another writer won this version, retry needed
 ```
 
-5 writers committed, and 15 got a clean conflict error to signal a retry. No
-silent overwrites, no corruption — the table's row count confirms every
-successful insert landed exactly once:
+Here we see 5 successful writes, and 15 signaled conflicts. Let's confirm in
+the data:
 
 ```sql
 SELECT count() AS total_rows FROM my_catalog.my_schema.concurrent_tbl;
 ```
+
 ```text
 ┌────────────┐
 │ total_rows │
@@ -362,9 +370,10 @@ SELECT count() AS total_rows FROM my_catalog.my_schema.concurrent_tbl;
 └────────────┘
 ```
 
-10 seeded rows + (5 writes × 5 rows each) = 35 total rows. Successful
-concurrent writes. In a real workload, you would retry the
-conflicted writes and land all 20 inserts.
+10 seeded rows + (5 writes × 5 rows each) = 35 total rows. (In a real workload,
+you would retry the conflicted writes and land all 20 inserts.) Catalog Managed
+Table commits gave us clear signal and semantics during highly concurrent
+writes, as promised.
 
 ## Conclusions
 
