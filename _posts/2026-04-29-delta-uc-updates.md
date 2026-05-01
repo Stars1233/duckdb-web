@@ -23,7 +23,7 @@ Before we jump in, let's review for a moment. Delta is a foundational [open
 table format and toolset](https://docs.delta.io/) for building and managing
 data lakes, related to Iceberg and other lakehouse formats. DuckDB supports
 Delta tables via its [Delta
-Extension](https://duckdb.org/docs/current/core_extensions/delta).
+Extension]({% link docs/current/core_extensions/delta.md %}).
 
 In that last update we highlighted performance wins, particularly file skipping
 via filter pushdowns, and metadata caching with snapshot pinning. Now we build
