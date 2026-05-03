@@ -1551,6 +1551,24 @@
               ]
             },
             {
+              "page": "Quack",
+              "slug": "quack",
+              "subsubfolderitems": [
+                {
+                  "page": "Overview",
+                  "url": "overview"
+                },
+                {
+                  "page": "Authentication and Authorization",
+                  "url": "auth"
+                },
+                {
+                  "page": "Encryption",
+                  "url": "encryption"
+                }
+              ]
+            },
+            {
               "page": "SQL Editors",
               "slug": "sql_editors",
               "subsubfolderitems": [
