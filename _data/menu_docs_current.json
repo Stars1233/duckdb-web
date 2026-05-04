@@ -1041,6 +1041,16 @@
           ]
         },
         {
+          "page": "Quack Remote Protocol",
+          "slug": "quack",
+          "subfolderitems": [
+            {
+              "page": "Overview",
+              "url": "overview"
+            }
+          ]
+        },
+        {
           "page": "Core Extensions",
           "slug": "core_extensions",
           "subfolderitems": [
