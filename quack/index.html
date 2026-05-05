@@ -40,10 +40,13 @@ max_page_width: large
 						<div class="codecard-body">
 {% highlight sql %}
 SELECT * FROM orders LIMIT 5;
-┌──────────────────────────────────┐
-│  id  │  product  │  total        │
-│   1  │  widget   │  $42.00       │
-└──────────────────────────────────┘
+{% endhighlight %}
+
+{% highlight text %}
+┌────────────────────────────┐
+│  id  │  product  │  total  │
+│   1  │  widget   │  42.00  │
+└────────────────────────────┘
 {% endhighlight %}
 						</div>
 					</div>
@@ -57,7 +60,9 @@ SELECT * FROM orders LIMIT 5;
 {% highlight sql %}
 INSERT INTO orders VALUES
     (3, 'tool', 29.99);
+{% endhighlight %}
 
+{% highlight text %}
 1 row inserted.
 {% endhighlight %}
 						</div>
@@ -134,6 +139,7 @@ CALL quack_serve();
 							<span class="tag">VIEWS</span>
 							<span class="tag">ACID TRANSACTIONS</span>
 							<span class="tag">PRIMARY KEYS</span>
+							<span class="tag">INDEXES</span>
 						</div>
 					</div>
 
@@ -149,7 +155,7 @@ CALL quack_serve();
 						</ul>
 						<div class="storage-tags">
 							<span class="tag">TABLES</span>
-							<span class="tag">VIEW</span>
+							<span class="tag">VIEWS</span>
 							<span class="tag">ACID TRANSACTIONS</span>
 							<span class="tag">SNAPSHOTS</span>
 						</div>
@@ -167,13 +173,13 @@ CALL quack_serve();
 		<div class="icon-grid" style="--icon-grid-columns: 2;">
 			<div class="icon-grid-item">
 				<svg class="icon"><use href="#server-05"></use></svg>
-				<h3>Client-Server Setup</h3>
+				<h3>Client-server setup</h3>
 				<p>You can take any two DuckDB processes on a network and turn them into client and server by using the Quack extension. The Quack protocol supports the full DuckDB feature set – over the wire.</p>
 			</div>
 			<div class="icon-grid-item">
 				<svg class="icon"><use href="#zap"></use></svg>
-				<h3>Optimized for Performance</h3>
-				<p>We designed the Quack protocol for performing large analytical queries. We minimized the number of round-trips, and ensured that the protocol can handle small updates and large batches just as well.</p>
+				<h3>Optimized for performance</h3>
+				<p>We designed the Quack protocol for performance. We minimized the number of round-trips, and ensured that the protocol can handle small updates and large batches just as well.</p>
 			</div>
 		</div>
 	</div>
