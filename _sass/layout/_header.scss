@@ -5,6 +5,7 @@
 /* Header Container */
 header .headerline {
 	border-bottom: 1px solid var(--main-codebox-border-color, #E6E6E6);
+	background: var(--main-body-background-color, #FAFAFA);
 	height: 70px;
 	width: 100%;
 	position: fixed;

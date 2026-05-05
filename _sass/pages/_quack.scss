@@ -38,17 +38,21 @@ body.quack {
 		}
 
 		.hero-subtitle {
-			margin: 32px auto 30px;
+			margin: 20px auto 30px;
 			max-width: 640px;
-			color: var(--social-thumbnail-text-color, #1a1a1a);
+			color: var(--main-text-secondary-color, #666);
 			font-size: 16px;
 			line-height: 1.4;
 		}
 
 		.hero-buttons {
 			display: flex;
-			gap: 10px;
+			gap: 8px;
 			justify-content: center;
+
+			.button {
+				margin-right: 0;
+			}
 		}
 	}
 
@@ -130,7 +134,7 @@ body.quack {
 	.codecard-header {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 6px;
 		padding: 12px 2px 12px 16px;
 		border-bottom: 1px solid var(--quack-codecard-border);
 		font-size: 12px;
@@ -152,7 +156,7 @@ body.quack {
 	}
 
 	.codecard-body {
-		padding: 16px 20px;
+		padding: 16px 20px 16px 16px;
 
 		pre,
 		figure.highlight,
@@ -174,6 +178,14 @@ body.quack {
 		}
 	}
 
+	.codecard-body + .codecard-meta {
+		border-top: 1px solid var(--quack-codecard-border);
+	}
+
+	.storage-panel .codecard-meta + .storage-tags {
+		border-top: 1px solid var(--quack-codecard-border);
+	}
+
 	.codecard-meta {
 		list-style: none;
 		margin: 0;
@@ -189,6 +201,10 @@ body.quack {
 			font-size: 10px;
 			letter-spacing: 0.2px;
 			color: var(--quack-text-secondary);
+
+			&.indented {
+				padding-left: 17px;
+			}
 		}
 
 		.icon {
@@ -331,7 +347,7 @@ body.quack {
 			margin: 0 auto;
 			font-size: 17px;
 			line-height: 1.6;
-			color: var(--main-text-primary-color, #0d0d0d);
+			color: var(--main-text-secondary-color, #666);
 		}
 
 		code {
@@ -365,16 +381,17 @@ body.quack {
 	.step {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
+		gap: 4px;
 
 		.step-label {
 			margin: 0;
+			padding-left: 8px;
 			color: var(--quack-step-label-color);
 		}
 
 		h3 {
 			margin: 0;
-			padding: 8px 0;
+			padding: 0 0 10px 8px;
 			font-size: 19px;
 			font-weight: 600;
 			color: var(--main-text-primary-color, #0d0d0d);
@@ -426,6 +443,11 @@ body.quack {
 			justify-content: center;
 			margin-top: 40px;
 		}
+	}
+
+	/* ----- Dark mode: connector arrows use light fills ----- */
+	@at-root html.darkmode body.quack .connector-arrow {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58' height='22' fill='none' viewBox='0 0 58 22'%3E%3Cpath fill='%23595959' d='M58 2.887 53 0v5.774zm-58 0v.5h53.5v-1H0z'/%3E%3Cpath fill='%23e6e6e6' d='M58 2.887 53 0v5.774zm-58 0v.5h53.5v-1H0z'/%3E%3Cpath fill='%23595959' d='m0 18.887 5 2.886V16zm58 0v-.5H4.5v1H58z'/%3E%3Cpath fill='%23e6e6e6' d='m0 18.887 5 2.886V16zm58 0v-.5H4.5v1H58z'/%3E%3C/svg%3E");
 	}
 
 	/* ----- Responsive ----- */

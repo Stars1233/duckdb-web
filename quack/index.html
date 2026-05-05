@@ -95,7 +95,7 @@ CALL quack_serve();
 					<ul class="codecard-meta">
 						<li><svg class="icon"><use href="#upload-cloud-01"></use></svg> listening on port 1294</li>
 						<li><svg class="icon"><use href="#link-03"></use></svg> 2 active connections</li>
-						<li><svg class="icon"><use href="#file-04"></use></svg> catalog: my_database.duckdb</li>
+						<li><svg class="icon"><use href="#file-04"></use></svg> catalog: <span class="server-catalog-name">my_database.duckdb</span></li>
 					</ul>
 				</div>
 			</div>
@@ -124,7 +124,7 @@ CALL quack_serve();
 						</button>
 					</div>
 
-					<div class="storage-panel" data-storage="duckdb">
+					<div class="storage-panel" data-storage="duckdb" data-catalog="my_database.duckdb">
 						<ul class="codecard-meta">
 							<li><svg class="icon"><use href="#file-04"></use></svg> my_database.duckdb</li>
 							<li><svg class="icon"><use href="#info-circle"></use></svg> 128 MB · last write 2s</li>
@@ -137,14 +137,14 @@ CALL quack_serve();
 						</div>
 					</div>
 
-					<div class="storage-panel hidden" data-storage="ducklake">
+					<div class="storage-panel hidden" data-storage="ducklake" data-catalog="my_ducklake">
 						<ul class="codecard-meta">
 							<li><svg class="icon"><use href="#waves"></use></svg> my_ducklake</li>
 							<li><svg class="icon"><use href="#database-01"></use></svg> Catalog database</li>
 							<li><svg class="icon"><use href="#server-04"></use></svg> Object storage</li>
-							<li><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
-							<li><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
-							<li><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
+							<li class="indented"><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
+							<li class="indented"><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
+							<li class="indented"><svg class="icon"><use href="#file-04"></use></svg> Parquet file</li>
 							<li><svg class="icon"><use href="#info-circle"></use></svg> 128 MB · last write 2s</li>
 						</ul>
 						<div class="storage-tags">
@@ -398,6 +398,17 @@ pip install duckdb
 (function() {
 	var tabs = document.querySelectorAll('.quack-architecture .storage-tabs .tab');
 	var panels = document.querySelectorAll('.quack-architecture .storage-panel');
+	var catalogSpan = document.querySelector('.server-catalog-name');
+
+	function syncCatalog(target) {
+		if (!catalogSpan) return;
+		panels.forEach(function(p) {
+			if (p.getAttribute('data-storage') === target) {
+				catalogSpan.textContent = p.getAttribute('data-catalog') || '';
+			}
+		});
+	}
+
 	tabs.forEach(function(btn) {
 		btn.addEventListener('click', function() {
 			var target = btn.getAttribute('data-target');
@@ -405,6 +416,7 @@ pip install duckdb
 			panels.forEach(function(p) {
 				p.classList.toggle('hidden', p.getAttribute('data-storage') !== target);
 			});
+			syncCatalog(target);
 		});
 	});
 })();
