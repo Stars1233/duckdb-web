@@ -27,9 +27,13 @@ div.singleentry {
 			margin-bottom: 300px;
 			margin: 1.8em 0;
 		}
-		
+
 		p:last-child {
 			margin-bottom: 0!important;
+		}
+
+		ul {
+			font-size: var(--type-body-small, 14px);
 		}
 
 		ul:last-of-type {
