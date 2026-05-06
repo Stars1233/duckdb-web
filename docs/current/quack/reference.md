@@ -62,7 +62,7 @@ All settings are regular DuckDB session / global options. Set with `SET ‚ü®name‚
 
 You can plug in your own auth by creating any scalar function with the expected signature and pointing the setting at it. See [Security]({% link docs/current/quack/security.md %}) for examples.
 
-### FETCH Batching (Server-Side)
+### `FETCH` Batching (Server-Side)
 
 The server batches multiple `DataChunk`s into each `FETCH` response to reduce per-chunk overhead.
 
