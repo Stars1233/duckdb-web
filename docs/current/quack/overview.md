@@ -20,7 +20,7 @@ A few facts that explain how Quack behaves:
 * **Client-driven request / response.** Every interaction is initiated by the client. There is no server push.
 * **`application/duckdb` serialization.** Requests and responses are encoded with DuckDB's internal serialization primitives (the same code path used by the Write-Ahead Log). This avoids round-tripping data through an interchange format and keeps complex types (nested, decimals, intervals, ...) lossless across the wire.
 * **Single round-trip per query.** After the initial connection handshake, a query needs only one request / response pair. Large results stream back in chunks via follow-up `FETCH` requests, optionally on multiple threads in parallel.
-* **Default port `1294`.** All URIs use the `quack:` scheme, e.g. `quack:hostname:port`.
+* **Default port `9494`.** All URIs use the `quack:` scheme, e.g. `quack:hostname:port`.
 
 ## Server-Side Usage
 
@@ -38,7 +38,7 @@ CALL quack_serve('quack:localhost');
 By default the server refuses to bind anything other than a local hostname. To listen on an externally-reachable address, pass `allow_other_hostname => true`:
 
 ```sql
-CALL quack_serve('quack:0.0.0.0:1294', allow_other_hostname => true);
+CALL quack_serve('quack:0.0.0.0:9494', allow_other_hostname => true);
 ```
 
 When you do this you should front the server with a TLS-terminating reverse proxy. See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/guides/reverse_proxy.md %}).
@@ -49,13 +49,13 @@ RPC endpoints use the `quack:` scheme. Some examples:
 
 <div class="monospace_table"></div>
 
-| URI                  | Host        | Port (default 1294) |
+| URI                  | Host        | Port (default 9494) |
 |----------------------|-------------|---------------------|
-| `quack:localhost`    | `localhost` | `1294`              |
+| `quack:localhost`    | `localhost` | `9494`              |
 | `quack:myhost:9000`  | `myhost`    | `9000`              |
-| `quack:127.0.0.1`    | `127.0.0.1` | `1294`              |
+| `quack:127.0.0.1`    | `127.0.0.1` | `9494`              |
 | `quack:[::1]:1234`   | `::1`       | `1234` (IPv6)       |
-| `quack://localhost`  | `localhost` | `1294`              |
+| `quack://localhost`  | `localhost` | `9494`              |
 
 You can parse and validate a URI with the `quack_uri_parser(uri, ssl)` scalar function.
 

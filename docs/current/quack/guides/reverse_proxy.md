@@ -25,7 +25,7 @@ Save this `Caddyfile`:
 
 ```text
 localhost:8443 {
-    reverse_proxy 127.0.0.1:1294 {
+    reverse_proxy 127.0.0.1:9494 {
         flush_interval -1
     }
 
@@ -64,7 +64,7 @@ FROM quack.query('SELECT 42');
 -- 42
 ```
 
-If the round-trip succeeds, your traffic just went out as TLS to Caddy, got terminated, and was forwarded as plain HTTP to Quack on `:1294`.
+If the round-trip succeeds, your traffic just went out as TLS to Caddy, got terminated, and was forwarded as plain HTTP to Quack on `:9494`.
 
 ## Caddy + Let's Encrypt
 
@@ -73,7 +73,7 @@ If the round-trip succeeds, your traffic just went out as TLS to Caddy, got term
 ```text
 # /etc/caddy/Caddyfile
 quack.example.com {
-    reverse_proxy 127.0.0.1:1294 {
+    reverse_proxy 127.0.0.1:9494 {
         # Equivalent of nginx `proxy_buffering off`. Required so Quack's
         # streamed FETCH responses pass through immediately instead of
         # being buffered in Caddy.
@@ -125,7 +125,7 @@ server {
     proxy_send_timeout 600s;
 
     location / {
-        proxy_pass http://127.0.0.1:1294;
+        proxy_pass http://127.0.0.1:9494;
 
         # Keep-alive against upstream. Quack relies on persistent
         # connections to keep server-side `quack_connection_id` state alive.
