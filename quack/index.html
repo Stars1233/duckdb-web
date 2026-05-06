@@ -17,6 +17,46 @@ max_page_width: large
 			<a class="button yellow" href="#install">Get started</a>
 			<a class="button transparent arrow-up-right" href="https://github.com/duckdb/duckdb" target="_blank" rel="noopener">GitHub</a>
 		</div>
+
+		<div class="quack-protocol-card">
+			<div class="quack-protocol-card-header">
+				<div class="quack-protocol-icon">
+					<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="none" viewBox="0 0 38 38"><path fill="var(--main-highlight-yellow-background-color)" d="M19 0C8.507 0 0 8.507 0 19s8.507 19 19 19 19-8.507 19-19S29.493 0 19 0"/><path fill="var(--main-highlight-yellow-text-color)" d="m23.3 21.2-1.7-1.7a1.583 1.583 0 1 0-2.24 2.238l1.698 1.698zM29.809 27.709l-1.67-1.67-2.241 2.237 1.672 1.672c.309.31.714.464 1.12.464a1.583 1.583 0 0 0 1.12-2.703"/><path fill="var(--main-highlight-yellow-text-color)" d="M19 28.463c-5.218 0-9.463-4.245-9.463-9.463S13.782 9.537 19 9.537s9.463 4.245 9.463 9.463-4.245 9.463-9.463 9.463m0-16.023A6.567 6.567 0 0 0 12.44 19 6.567 6.567 0 0 0 19 25.56 6.567 6.567 0 0 0 25.56 19 6.57 6.57 0 0 0 19 12.44"/></svg>
+				</div>
+				<div class="quack-protocol-card-title">
+					<h3>Quack Protocol</h3>
+					<p>Client-server access · Preview</p>
+				</div>
+			</div>
+			<div class="quack-protocol-card-meta">
+				<span class="tag">Quack v0.1</span>
+				<div class="works-with">
+					<span class="works-with-label">Works with</span>
+					<a class="tag" href="{{ site.url }}/">DuckDB</a>
+					<a class="tag" href="https://ducklake.select/" target="_blank" rel="noopener">DuckLake</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="quack-introducing podcast">
+	<div class="wrap flexwrap">
+		<div class="section-image">
+			<div class="video-thumbnail" data-video-id="">
+				<img src="{{ site.baseurl }}/images/quack/quack-release-thumbnail.jpg" alt="Thumbnail: Introducing Quack">
+				<div class="play-button">
+					<svg xmlns="http://www.w3.org/2000/svg" width="218" height="218" fill="none" viewBox="0 0 218 218"><g fill-opacity=".6" filter="url(#a)"><path fill="#fffff5" d="M108.852 70.5C87.704 70.5 70.5 87.704 70.5 108.852s17.204 38.352 38.352 38.352 38.352-17.204 38.352-38.352S130 70.5 108.852 70.5"/><path fill="#998b00" d="m124.223 107.506-21.148-14.465c-.657-.485-2.411-.485-2.552 1.347v28.928a1.623 1.623 0 0 0 2.552 1.346l21.148-14.464c.548-.329 1.3-1.675 0-2.692"/></g><defs><filter id="a" width="217.704" height="217.704" x="0" y="0" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset/><feGaussianBlur stdDeviation="35.25"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow_15022_25066"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_15022_25066" result="shape"/></filter></defs></svg>
+				</div>
+			</div>
+			<div class="video-container" style="display: none;">
+				<iframe data-src="" title="YouTube video player" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			</div>
+		</div>
+		<div class="section-text">
+			<h2>Introducing Quack</h2>
+			<p>Hannes Mühleisen introduces Quack at AI Council 2026 in his talk "The Super-Secret Next Big Thing for DuckDB".</p>
+		</div>
 	</div>
 </section>
 
@@ -364,65 +404,3 @@ pip install duckdb
 	</div>
 </section>
 
-<script>
-(function() {
-	var topbar = document.querySelector('.quack-install .install-topbar');
-	if (!topbar) return;
-	var lis = topbar.querySelectorAll('li');
-	var highlight = topbar.querySelector('.select-highlight');
-	var panes = document.querySelectorAll('.quack-install .install-steps');
-
-	function moveHighlight(li) {
-		highlight.style.left = li.offsetLeft + 'px';
-		highlight.style.width = li.offsetWidth + 'px';
-	}
-
-	function activate(li) {
-		var target = li.getAttribute('data-target');
-		lis.forEach(function(x) { x.classList.toggle('active', x === li); });
-		panes.forEach(function(p) {
-			p.classList.toggle('hidden', p.getAttribute('data-tab') !== target);
-		});
-		moveHighlight(li);
-	}
-
-	lis.forEach(function(li) {
-		li.addEventListener('click', function() { activate(li); });
-	});
-
-	var initial = topbar.querySelector('li.active') || lis[0];
-	if (initial) {
-		requestAnimationFrame(function() { moveHighlight(initial); });
-		window.addEventListener('resize', function() {
-			var current = topbar.querySelector('li.active') || lis[0];
-			if (current) moveHighlight(current);
-		});
-	}
-})();
-
-(function() {
-	var tabs = document.querySelectorAll('.quack-architecture .storage-tabs .tab');
-	var panels = document.querySelectorAll('.quack-architecture .storage-panel');
-	var catalogSpan = document.querySelector('.server-catalog-name');
-
-	function syncCatalog(target) {
-		if (!catalogSpan) return;
-		panels.forEach(function(p) {
-			if (p.getAttribute('data-storage') === target) {
-				catalogSpan.textContent = p.getAttribute('data-catalog') || '';
-			}
-		});
-	}
-
-	tabs.forEach(function(btn) {
-		btn.addEventListener('click', function() {
-			var target = btn.getAttribute('data-target');
-			tabs.forEach(function(t) { t.classList.toggle('active', t === btn); });
-			panels.forEach(function(p) {
-				p.classList.toggle('hidden', p.getAttribute('data-storage') !== target);
-			});
-			syncCatalog(target);
-		});
-	});
-})();
-</script>
