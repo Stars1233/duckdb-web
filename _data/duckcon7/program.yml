@@ -54,5 +54,5 @@
           title: "DuckDB as an analytical runtime: Building local-first analytics apps with SQLRooms"
           speaker: "Ilya Boyandina<br>(Foursquare / GeoVisually GmbH)"
         - time: "17:45"
-          title: "TBA"
-          speaker: "TBA"
+          title: "A laptop, a duck, and twenty years of wind: Auditing UK energy policy without a cluster"
+          speaker: "Barry Smart<br>(endjin)"
