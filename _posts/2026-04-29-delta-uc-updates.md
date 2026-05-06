@@ -240,8 +240,6 @@ With these in hand you can use DuckDB directly, or access
 the extensive [UC Open
 API](https://docs.databricks.com/api/workspace/introduction) directly.
 
-</details>
-
 Next, let's complete the circle and write some data into our pets table:
 
 ```sql
