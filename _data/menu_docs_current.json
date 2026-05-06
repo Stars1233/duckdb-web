@@ -1237,6 +1237,28 @@
             {
               "page": "Overview",
               "url": "overview"
+            },
+            {
+              "page": "Reference",
+              "url": "reference"
+            },
+            {
+              "page": "Security",
+              "url": "security"
+            },
+            {
+              "page": "Guides",
+              "slug": "guides",
+              "subsubfolderitems": [
+                {
+                  "page": "Reverse Proxy",
+                  "url": "reverse_proxy"
+                },
+                {
+                  "page": "Deployment",
+                  "url": "deployment"
+                }
+              ]
             }
           ]
         },
@@ -1557,24 +1579,6 @@
                 {
                   "page": "Using fsspec Filesystems",
                   "url": "filesystems"
-                }
-              ]
-            },
-            {
-              "page": "Quack",
-              "slug": "quack",
-              "subsubfolderitems": [
-                {
-                  "page": "Overview",
-                  "url": "overview"
-                },
-                {
-                  "page": "Authentication and Authorization",
-                  "url": "auth"
-                },
-                {
-                  "page": "Encryption",
-                  "url": "encryption"
                 }
               ]
             },
