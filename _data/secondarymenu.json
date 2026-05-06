@@ -50,6 +50,10 @@
               "url": "/library/"
             },
             {
+              "page": "Quack",
+              "url": "/quack/"
+            },
+            {
               "page": "Events",
               "url": "/events/"
             },
