@@ -13,8 +13,8 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Function | Description |
 |----------|-------------|
-| `quack_serve(uri, allow_other_hostname := false, disable_ssl := false)` | Start a server on `uri`. Localhost-only by default. Returns listen URI, URL, and an auth token. |
-| `rpc_stop(uri)`                                           | Stop the server listening on `uri`. |
+| `quack_serve(uri, token := ⟨t⟩, allow_other_hostname := false, disable_ssl := false)` | Start a server on `uri`. Localhost-only by default. Pass `token` to set the server's authentication token explicitly; otherwise one is generated. Returns listen URI, URL, and the auth token. |
+| `quack_stop(uri)`                                         | Stop the server listening on `uri`. |
 | `quack_identify(name, provider, hostname, region, meta)`  | Set this node's `whoami` identity fields. Any subset can be supplied. |
 | `whoami()`                                                | Table macro returning identity + runtime info for the current node. |
 
@@ -24,7 +24,7 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Function | Description |
 |----------|-------------|
-| `quack_query(uri, query, disable_ssl := false)`  | Run `query` on remote `uri`, stream result back. |
+| `quack_query(uri, query, token := ⟨t⟩, disable_ssl := false)` | Run `query` on remote `uri`, stream result back. Pass `token` to override any matching quack secret on the client side. |
 | `quack_query_by_name(catalog, query)`            | Run `query` against an already-attached Quack catalog (used by `⟨catalog⟩.query()`). |
 
 ### Utility
@@ -33,9 +33,9 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Function | Description |
 |----------|-------------|
-| `quack_uri_parser(uri, ssl)`             | Parse a Quack URI into `{host, port, ipv6, ssl, url}`. |
-| `quack_check_token(sid, token)`          | Default authentication callback; compares against `rpc_default_token`. |
-| `quack_nop_authorization(sid, query)`    | Default authorization callback; always allows. |
+| `quack_uri_parser(uri, ssl)`                              | Parse a Quack URI into `{host, port, ipv6, ssl, url}`. Scalar function returning a STRUCT. |
+| `quack_check_token(sid, client_token, server_token)`      | Default authentication callback; compares the client-supplied token against the server's stored token. |
+| `quack_nop_authorization(sid, query)`                     | Default authorization callback; always allows. |
 
 ### `ATTACH` Options
 
@@ -43,6 +43,7 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Option        | Type    | Default                          | Description |
 |---------------|---------|----------------------------------|-------------|
+| `token`       | VARCHAR | *(unset)*                        | Authentication token. Overrides any matching quack secret on the client side. |
 | `disable_ssl` | BOOLEAN | `true` for local, else `false`   | Force the client transport. Local URIs default to plain HTTP. |
 | `type`        | VARCHAR | inferred                         | Pin the secret type used for token resolution (e.g. `quack`). |
 
@@ -56,9 +57,8 @@ All settings are regular DuckDB session / global options. Set with `SET ⟨name�
 
 | Setting                       | Type    | Default                   | Description |
 |-------------------------------|---------|---------------------------|-------------|
-| `quack_authentication_function` | VARCHAR | `quack_check_token`        | Name of a 2-arg scalar function `(sid, token) -> BOOLEAN` used by the server to authenticate clients. |
+| `quack_authentication_function` | VARCHAR | `quack_check_token`        | Name of a 3-arg scalar function `(sid, client_token, server_token) -> BOOLEAN` used by the server to authenticate clients. |
 | `quack_authorization_function`  | VARCHAR | `quack_nop_authorization`  | Name of a 2-arg scalar function `(sid, query) -> BOOLEAN` used by the server to authorize each query. |
-| `rpc_default_token`             | VARCHAR | *(unset)*                  | Shared secret. The server generates one on `quack_serve`; clients use it as fallback if no quack secret matches. |
 
 You can plug in your own auth by creating any scalar function with the expected signature and pointing the setting at it. See [Security]({% link docs/current/quack/security.md %}) for examples.
 

@@ -62,7 +62,7 @@ You can parse and validate a URI with the `quack_uri_parser(uri, ssl)` scalar fu
 ### Stopping a Server
 
 ```sql
-CALL rpc_stop('quack:localhost');
+CALL quack_stop('quack:localhost');
 ```
 
 ## Client-Side Usage
@@ -119,9 +119,10 @@ FROM quack.query('SELECT 42');
 
 ### Authentication
 
-The two ways to provide an auth token to a client are covered in [Security]({% link docs/current/quack/security.md %}). The short version: scope a `quack` secret to the server URI, or fall back to `SET rpc_default_token = '...'`.
+Clients pass the auth token to the server in one of two ways: a `quack` secret scoped to the server URI, or an explicit `TOKEN` option on `ATTACH` / `quack_query`. See [Security]({% link docs/current/quack/security.md %}) for the full picture.
 
 ```sql
+-- Recommended: scope a secret to the server URI.
 CREATE SECRET (
     TYPE quack,
     TOKEN '⟨token-from-quack_serve⟩',
@@ -129,6 +130,9 @@ CREATE SECRET (
 );
 
 ATTACH 'quack:localhost' AS quack (TYPE quack);
+
+-- Or pass the token directly (overrides any matching secret):
+ATTACH 'quack:localhost' AS quack (TOKEN '⟨token-from-quack_serve⟩');
 ```
 
 ### Node Identity (`whoami`)

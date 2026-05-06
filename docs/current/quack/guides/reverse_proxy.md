@@ -55,9 +55,10 @@ CALL quack_serve('quack:localhost');
 In another session, connect through Caddy on `:8443`. Local URIs default to plain HTTP, so you have to **force SSL on** explicitly:
 
 ```sql
-SET rpc_default_token = '⟨auth_token-from-quack_serve⟩';
-
-ATTACH 'quack:localhost:8443' AS quack (disable_ssl false);
+ATTACH 'quack:localhost:8443' AS quack (
+    TOKEN '⟨auth_token-from-quack_serve⟩',
+    disable_ssl false
+);
 
 FROM quack.query('SELECT 42');
 -- 42

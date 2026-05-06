@@ -32,7 +32,7 @@ Both checks ship with built-in defaults that are suitable for local development 
 
 Out of the box:
 
-* **Authentication is token-based.** When you call `quack_serve`, the server generates a random token and returns it in the `auth_token` column. Clients have to present this token (via a quack secret or the `rpc_default_token` setting) on every connection. The default authentication callback simply compares the supplied token against the server's `rpc_default_token` setting.
+* **Authentication is token-based.** When you call `quack_serve`, the server generates a random token and returns it in the `auth_token` column (or you can supply one explicitly via `quack_serve(uri, token := '...')`). Clients have to present this token on every connection, either through a `quack` secret scoped to the server URI or via the explicit `TOKEN` option on `ATTACH` / `quack_query`. The default authentication callback compares the client-supplied token against the server's stored token.
 * **Authorization is permissive.** The default authorization callback returns `true` for every query. No further filtering happens.
 
 Both callbacks can be replaced with user-supplied code, including plain SQL macros. See the examples below.
@@ -52,7 +52,7 @@ The server invokes them by running:
 
 ```sql
 -- on every CONNECTION_REQUEST
-SELECT ⟨quack_authentication_function⟩(⟨session_id⟩, ⟨client_token⟩);
+SELECT ⟨quack_authentication_function⟩(⟨session_id⟩, ⟨client_token⟩, ⟨server_token⟩);
 
 -- on every PREPARE_REQUEST
 SELECT ⟨quack_authorization_function⟩(⟨connection_id⟩, ⟨query⟩);
@@ -60,18 +60,18 @@ SELECT ⟨quack_authorization_function⟩(⟨connection_id⟩, ⟨query⟩);
 
 Both calls expect a `BOOLEAN` return: `true` admits the request, anything else (including a query error) rejects it with "Authentication failed" / "Authorization failed".
 
-The arguments are always `VARCHAR`:
+The arguments are always `VARCHAR`. Authentication takes three; authorization takes two:
 
-| Hook | First arg | Second arg |
-|------|-----------|------------|
-| Auth  | Server-generated session id (random 32-char). Becomes the `quack_connection_id` for that client. | The auth string the client sent. |
-| Authz | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg). | The full SQL text the client wants to execute. |
+| Hook | First arg | Second arg | Third arg |
+|------|-----------|------------|-----------|
+| Auth  | Server-generated session id (random 32-char). Becomes the `quack_connection_id` for that client. | The token the client sent. | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
+| Authz | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg). | The full SQL text the client wants to execute. | *(not used)* |
 
 The first arg of the authz hook lets you correlate against state your auth hook recorded, e.g. mapping a connection id to a user name.
 
 The callbacks run in a **fresh, transient server-side connection**. That means they can read tables, call other UDFs, and reference extensions, but each invocation starts a new session and cannot rely on session-local state.
 
-Anything resolvable as a 2-argument `(VARCHAR, VARCHAR) → BOOLEAN` function will work: built-in scalar functions, scalar UDFs registered by another extension, or SQL macros.
+Anything resolvable as a function with the matching arity and `→ BOOLEAN` return type will work: built-in scalar functions, scalar UDFs registered by another extension, or SQL macros. Authentication takes `(VARCHAR, VARCHAR, VARCHAR)`; authorization takes `(VARCHAR, VARCHAR)`.
 
 ## Overriding Authentication
 
@@ -87,8 +87,8 @@ INSERT INTO rpc_tokens VALUES
     ('alice-key-123', 'alice'),
     ('bob-key-456',   'bob');
 
-CREATE MACRO check_token(sid, supplied_token) AS (
-    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = supplied_token)
+CREATE MACRO check_token(sid, client_token, server_token) AS (
+    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = client_token)
 );
 
 SET quack_authentication_function = 'check_token';
@@ -101,7 +101,7 @@ Now any client whose token is in `rpc_tokens` is admitted; everyone else is reje
 Useful when iterating locally:
 
 ```sql
-CREATE MACRO yolo_auth(sid, token) AS (true);
+CREATE MACRO yolo_auth(sid, client_token, server_token) AS (true);
 SET quack_authentication_function = 'yolo_auth';
 ```
 
@@ -161,8 +161,8 @@ A self-contained example: a server that requires per-user tokens and limits each
 CREATE TABLE rpc_tokens (auth_token VARCHAR, user_name VARCHAR);
 INSERT INTO rpc_tokens VALUES ('analytics-team-token', 'analytics');
 
-CREATE MACRO check_token(sid, supplied_token) AS (
-    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = supplied_token)
+CREATE MACRO check_token(sid, client_token, server_token) AS (
+    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = client_token)
 );
 
 CREATE MACRO read_only(sid, query) AS (
@@ -172,7 +172,7 @@ CREATE MACRO read_only(sid, query) AS (
 SET quack_authentication_function = 'check_token';
 SET quack_authorization_function  = 'read_only';
 
-CALL quack_serve('quack:localhost');
+CALL quack_serve('quack:localhost', token => 'analytics-team-token');
 ```
 
 A client with the right token now connects and can run `SELECT`s, but `INSERT INTO quack.t …` issued through the standard SQL path will fail at authz time.
