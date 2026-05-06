@@ -96,53 +96,7 @@ ATTACH './path/to/my_table' AS my_table_pinned
 SELECT count() FROM my_table_pinned;  -- → 6
 ```
 
-On top of that, snapshot loading will be performed incrementally when possible,
-making time travel even faster. Consider a table where some initial queries are
-made against version 16:
-
-```sql
-ATTACH './path/to/table' AS t (TYPE delta, VERSION 16);
-SELECT count() FROM t;  -- → 17
-```
-
-And now some work needs to be done against version 20. If we peek under the
-hood (warning: sneaky code follows), we'll see that none of the previously
-loaded Delta log metadata files were re-loaded:
-
-```sql
-SET enable_logging = true;
-SET delta_kernel_logging = true;
-CALL enable_logging('DeltaKernel', level = 'trace');
-
-ATTACH './path/to/table' AS t (TYPE delta, VERSION 20);
-SELECT count() FROM t;  -- → 21
-
--- Delta kernel logs 'Provisionally selecting ... <version>.json'
--- whenever it reads a log file from scratch. We search for any such
--- message referencing a zero-padded log filename; zero matches
--- means the cached v16 snapshot was extended incrementally rather
--- than rebuilt.
-SELECT count() FROM duckdb_logs
-WHERE type = 'DeltaKernel'
-  AND message LIKE '%00000000000000000%.json%';
--- → 0
-```
-
-In Delta lakes with thousands or millions of snapshots, incremental loading
-provides a big win when working across multiple versions.
-
-> At time of writing, incremental snapshot loading is supported in nightly builds.
-> You can install it using:
->
-> ```sql
-> FORCE INSTALL delta FROM core_nightly;
-> ```
->
-> Please be aware that nightly builds are not intended for production use.
-> The implementation will be included in the next stable release,
-> [v1.5.3]({% link release_calendar.md %}).
-
-### Growing Up: No Longer a Kit
+### Growing Up: No Longer a Kit 🦫
 
 The DuckDB Delta extension is no longer a
 [kit](https://duckduckgo.com/?q=what+is+a+baby+beaver+called) and has grown
@@ -235,10 +189,10 @@ That's it! You just queried Unity-Catalog-managed, Delta-stored pets data.
 >   `unity-catalog` scope); getting the correct token depends
 >   entirely on your setup. To dive in, see [Access Control in Unity
 >   Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/access-control/).
-
-With these in hand you can use DuckDB directly, or access
-the extensive [UC Open
-API](https://docs.databricks.com/api/workspace/introduction) directly.
+>
+> With these in hand you can use DuckDB directly, or access
+> the extensive [UC Open
+> API](https://docs.databricks.com/api/workspace/introduction) directly.
 
 Next, let's complete the circle and write some data into our pets table:
 
@@ -337,9 +291,13 @@ VALUES (gen_random_uuid()::VARCHAR, 'Luna', 3, true);
 Now each DuckDB writer stages its commit to a `_staged_commits/` directory and
 registers it with UC before that data becomes visible. UC arbitrates: exactly
 one writer wins each version in a race, the rest get a conflict error and can
-retry.
+retry. Next, let's look at how UC handles the race.
 
-To test the feature, we launched 20 competing DuckDB
+## Deeper Dive
+
+### Racing Commits
+
+To see how CMT arbitrates, we launched 20 concurrent DuckDB
 writers, 8 at a time, all inserting into the same CMT table:
 
 ```batch
@@ -389,6 +347,55 @@ SELECT count() AS total_rows FROM my_catalog.my_schema.concurrent_tbl;
 you would retry the conflicted writes and land all 20 inserts.) Catalog Managed
 Table commits gave us clear signal and semantics during highly concurrent
 writes, as promised.
+
+### Travel in Time, Faster
+
+DuckDB's Delta snapshot loading is getting a serious speed boost: snapshots
+will load incrementally when possible, making time travel across nearby
+versions significantly faster. Consider a table where some initial queries are
+made against version 16:
+
+```sql
+ATTACH './path/to/table' AS t (TYPE delta, VERSION 16);
+SELECT count() FROM t;  -- → 17
+```
+
+And now some work needs to be done against version 20. If we peek under the
+hood (warning: sneaky code follows), we'll see that none of the previously
+loaded Delta log metadata files were re-loaded:
+
+```sql
+SET enable_logging = true;
+SET delta_kernel_logging = true;
+CALL enable_logging('DeltaKernel', level = 'trace');
+
+ATTACH './path/to/table' AS t (TYPE delta, VERSION 20);
+SELECT count() FROM t;  -- → 21
+
+-- Delta kernel logs 'Provisionally selecting ... <version>.json'
+-- whenever it reads a log file from scratch. We search for any such
+-- message referencing a zero-padded log filename; zero matches
+-- means the cached v16 snapshot was extended incrementally rather
+-- than rebuilt.
+SELECT count() FROM duckdb_logs
+WHERE type = 'DeltaKernel'
+  AND message LIKE '%00000000000000000%.json%';
+-- → 0
+```
+
+In Delta lakes with thousands or millions of snapshots, incremental loading
+provides a big win when working across multiple versions.
+
+> At time of writing, incremental snapshot loading is supported in nightly builds.
+> You can install it using:
+>
+> ```sql
+> FORCE INSTALL delta FROM core_nightly;
+> ```
+>
+> Please be aware that nightly builds are not intended for production use.
+> The implementation will be included in the next stable release,
+> [v1.5.3]({% link release_calendar.md %}).
 
 ## Conclusions
 
