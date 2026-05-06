@@ -56,3 +56,8 @@
         - time: "17:45"
           title: "A laptop, a duck, and twenty years of wind: Auditing UK energy policy without a cluster"
           speaker: "Barry Smart<br>(endjin)"
+    - first session:
+      title: Social event
+      timetable:
+        - time: "18:00"
+          title: "Drink and snacks"
