@@ -16,6 +16,10 @@
               "url": "/install/"
             },
             {
+              "page": "Quack Remote Protocol",
+              "url": "/quack/"
+            },
+            {
               "page": "Guides",
               "url": "/docs/current/guides/overview"
             },
@@ -50,7 +54,7 @@
               "url": "/library/"
             },
             {
-              "page": "Quack",
+              "page": "Quack Announcement",
               "url": "/quack/"
             },
             {
