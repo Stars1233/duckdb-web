@@ -223,22 +223,18 @@ SELECT name, age, adopted FROM my_catalog.pets ORDER BY name;
 
 That's it! You just queried Unity-Catalog-managed, Delta-stored pets data.
 
-<details markdown='1'>
-<summary markdown='span'>
-Interested in experimenting with Databricks Unity Catalog? Click here.
-</summary>
-Want to experiment with this on Databricks Unity Catalog? Setting up a
-Databricks Unity Catalog is out of scope for this blog, but if you have one
-ready to go, you will need these to get bootstrapped with DuckDB:
-
-- set `ENDPOINT` to [your Workspace
-  URL](https://docs.databricks.com/aws/en/workspace/workspace-details#workspace-instance-names-urls-and-ids)
-  (typically: https://{instance}.cloud.databricks.com/)
-- set `TOKEN` appropriately (e.g. [create a
-  PAT](https://docs.databricks.com/aws/en/dev-tools/auth/pat) with
-  `unity-catalog` scope); getting the correct token depends
-  entirely on your setup. To dive in, see [Access Control in Unity
-  Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/access-control/).
+> Tip Want to experiment with this on Databricks Unity Catalog? Setting up a
+> Databricks Unity Catalog is out of scope for this blog, but if you have one
+> ready to go, you will need these to get bootstrapped with DuckDB:
+>
+> - set `ENDPOINT` to [your Workspace
+>   URL](https://docs.databricks.com/aws/en/workspace/workspace-details#workspace-instance-names-urls-and-ids)
+>   (typically: https://{instance}.cloud.databricks.com/)
+> - set `TOKEN` appropriately (e.g. [create a
+>   PAT](https://docs.databricks.com/aws/en/dev-tools/auth/pat) with
+>   `unity-catalog` scope); getting the correct token depends
+>   entirely on your setup. To dive in, see [Access Control in Unity
+>   Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/access-control/).
 
 With these in hand you can use DuckDB directly, or access
 the extensive [UC Open
