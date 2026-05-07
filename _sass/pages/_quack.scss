@@ -62,8 +62,6 @@ body.quack {
 			border: 1px solid var(--main-codebox-border-color, rgba(13, 13, 13, 0.08));
 			border-radius: var(--quack-radius-card);
 			background: var(--main-codebox-main-background-color, rgba(250, 250, 250, 0.8));
-			backdrop-filter: blur(3.5px);
-			-webkit-backdrop-filter: blur(3.5px);
 			overflow: hidden;
 		}
 
@@ -258,6 +256,7 @@ body.quack {
 		border: 1px solid var(--main-codebox-border-color, rgba(13, 13, 13, 0.08));
 		border-radius: var(--quack-radius-card);
 		box-shadow: 2px 2px 24px 0 var(--main-codebox-dropshadow, rgba(0, 0, 0, 0.03));
+		text-rendering: geometricPrecision;
 	}
 
 	.arch-col {
@@ -297,7 +296,6 @@ body.quack {
 		background: var(--quack-codecard-bg);
 		border: 1px solid var(--quack-codecard-border);
 		border-radius: var(--quack-radius-inner);
-		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
@@ -317,6 +315,8 @@ body.quack {
 		gap: 6px;
 		padding: 12px 2px 12px 16px;
 		border-bottom: 1px solid var(--quack-codecard-border);
+		border-top-left-radius: var(--quack-radius-inner);
+		border-top-right-radius: var(--quack-radius-inner);
 		font-size: 12px;
 		font-weight: 600;
 	}
@@ -434,6 +434,8 @@ body.quack {
 		gap: 5px;
 		padding: 8px 2px 8px 8px;
 		border-bottom: 1px solid var(--quack-codecard-border);
+		border-top-left-radius: var(--quack-radius-inner);
+		border-top-right-radius: var(--quack-radius-inner);
 
 		.tab {
 			display: inline-flex;
