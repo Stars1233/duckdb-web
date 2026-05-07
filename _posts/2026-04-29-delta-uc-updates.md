@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Delta Grows Up: Writes, Time Travel and Unity Catalog"
+title: "Delta Grows Up: Writes, Unity Catalog and Time Travel"
 author: "Ben Fleis"
-excerpt: "DuckDB's Delta and Unity Catalog extensions shed their experimental tags — now with writes, time travel, and catalog managed table support."
+excerpt: "DuckDB's Delta and Unity Catalog extensions shed their experimental tags — now with writes, Unity Catatlog and time travel support."
 tags: ["extensions"]
 thumb: "/images/blog/thumbs/delta-uc-updates.svg"
 image: "/images/blog/thumbs/delta-uc-updates.jpg"
@@ -112,8 +112,9 @@ it's being used, and coordinate writes across multiple engines. Data catalogs
 have evolved to address exactly these needs, sitting above the storage layer
 to manage the metadata, governance, and transactional bookkeeping that make
 large-scale data lakes effective. The OSS Unity Catalog team has a [good
-overview](https://www.unitycatalog.io/blogs/data-catalog) if you'd like to go
-deeper; the concepts apply broadly regardless of which catalog you use.
+overview](https://unitycatalog.io/blogs/what-is-a-data-catalog-and-why-do-i-need-one/)
+if you'd like to go deeper; the concepts apply broadly regardless of which
+catalog you use.
 
 ### What is Unity Catalog?
 
