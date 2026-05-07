@@ -41,7 +41,7 @@ CREATE SECRET (
 ATTACH 'my_catalog' AS my_catalog (TYPE unity_catalog, DEFAULT_SCHEMA 'main');
 ```
 
-Where `token` comes from your Databricks or OSS Unity Catalog deployment, and `endpoint` is your Unity Catalog REST API endpoint. For more details see the [Databricks Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog) and [OSS Unity Catalog](https://docs.unitycatalog.io/) documentation.
+Where `ENDPOINT` is your Unity Catalog REST API endpoint and `TOKEN` is a suitable credential. For Databricks, `ENDPOINT` is your [Workspace URL](https://docs.databricks.com/aws/en/workspace/workspace-details#workspace-instance-names-urls-and-ids) (typically `https://⟨instance⟩.cloud.databricks.com/`) and `TOKEN` can be e.g., a [personal access token](https://docs.databricks.com/aws/en/dev-tools/auth/pat) with `unity-catalog` scope — see [Access Control in Unity Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/access-control/) for the full range of options. For OSS Unity Catalog, see the [OSS Unity Catalog documentation](https://docs.unitycatalog.io/).
 
 ### Reading
 
