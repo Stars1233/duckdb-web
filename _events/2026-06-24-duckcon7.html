@@ -80,7 +80,7 @@ redirect_from:
   <hr class="divider" />
 </section>
 
-<section class="map w-large">
+<section class="map w-large" id="venue">
   <div class="wrap">
     <ul class="map-menu text-secondary-color">
       <li>
@@ -92,6 +92,16 @@ redirect_from:
     </ul>
      <div class="js-duckcon7-map embedded-map" id="duckcon7-map" data-lat="52.3627833" data-lng="4.9205426" data-label="Royal Tropical Institute"></div>
   </div>
+  <hr class="divider" />
+</section>
+
+<section class="sponsors" id="sponsors">
+  {% include duckcon7/section_header.html title="Sponsorship options" description="We are looking for sponsors – help us make DuckCon #7 a success!<br>See our <a href='http://blobs.duckdb.org/merch/duckcon-7-amsterdam-sponsorship-brochure.pdf'>sponsorship packages</a> and <a href='mailto:gabor@duckdblabs.com'>reach out to us</a>." %}
+  <ul class="sponsors-list">
+    <li>
+      
+    </li>
+  </ul>
   <hr class="divider" />
 </section>
 
@@ -108,6 +118,11 @@ redirect_from:
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
   </div>
+  <hr class="divider" />
+</section>
+
+<section class="reach_out" id="reach_out">
+  {% include duckcon7/section_header.html title="Any questions?" description="If you have any questions or any special requirements (e.g., dietary restrictions),<br>don't hesitate to <a href='mailto:gabor@duckdblabs.com'>contact us</a>!" %}
 </section>
 
 <!--
@@ -144,23 +159,6 @@ redirect_from:
 </section>
 -->
 <!--
-<section class="sponsors">
-  {% include duckcon7/section_header.html title="Sponsors" description="We extend our sincere thanks to DuckCon #7’s sponsors for powering this community event and supporting the future of open-source analytics." %}
-  <ul class="sponsors-list">
-    <li>
-      
-    </li>
-    <li>
-      
-    </li>
-    <li>
-      
-    </li>
-  </ul>
-  <hr class="divider" />
-</section>
--->
-<!--
 <section class="venue" id="venue">
   {% include duckcon7/section_header.html title="Venue" description="" %}
 </section>
@@ -182,7 +180,7 @@ redirect_from:
 -->
 <!--
 <section class="venue-access w-large">
-  {% include duckcon7/section_header.html title="Acessing the venue" description="" %}
+  {% include duckcon7/section_header.html title="Accessing the venue" description="" %}
   {% if site.data.duckcon7.venue_access %}
     <div class="wrap feature-list">
       <ul class="flexwrap feature-list">

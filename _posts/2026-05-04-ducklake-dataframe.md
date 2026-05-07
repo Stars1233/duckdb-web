@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The DuckLake Spec is so Simple, Even a Clanker Can Build One for Dataframes"
+title: "The DuckLake Spec Is so Simple, Even a Clanker Can Build One for Dataframes"
 thumb: "/images/blog/thumbs/ducklake-dataframe.svg"
 image: "/images/blog/thumbs/ducklake-dataframe.jpg"
 author: "Pedro Holanda, Dr. Peter van Holland"
