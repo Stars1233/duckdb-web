@@ -19,7 +19,7 @@ extension:
 
 repo:
   github: nkwork9999/pic2vec
-  ref: cf194463acbb4c5fa27cb6fb779698160b848a69
+  ref: d39ef33b1389e670e1b19861ec1b6a51c3717273
 
 docs:
   hello_world: |
@@ -114,8 +114,8 @@ docs:
 
 extension_star_count: 0
 extension_star_count_pretty: 0
-extension_download_count: 193
-extension_download_count_pretty: 193
+extension_download_count: 327
+extension_download_count_pretty: 327
 image: '/images/community_extensions/social_preview/preview_community_extension_pic2vec.png'
 layout: community_extension_doc
 ---

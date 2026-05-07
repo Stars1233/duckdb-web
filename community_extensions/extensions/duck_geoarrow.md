@@ -77,10 +77,10 @@ docs:
     containing valid WKB. The native-typed functions validate that the input geometry
     matches the expected type and raise an error on mismatch.
 
-extension_star_count: 2
-extension_star_count_pretty: 2
-extension_download_count: 412
-extension_download_count_pretty: 412
+extension_star_count: 3
+extension_star_count_pretty: 3
+extension_download_count: 424
+extension_download_count_pretty: 424
 image: '/images/community_extensions/social_preview/preview_community_extension_duck_geoarrow.png'
 layout: community_extension_doc
 ---
