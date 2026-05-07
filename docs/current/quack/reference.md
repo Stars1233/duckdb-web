@@ -43,9 +43,9 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Option        | Type    | Default                          | Description |
 |---------------|---------|----------------------------------|-------------|
-| `token`       | VARCHAR | *(unset)*                        | Authentication token. Overrides any matching quack secret on the client side. |
-| `disable_ssl` | BOOLEAN | `true` for local, else `false`   | Force the client transport. Local URIs default to plain HTTP. |
-| `type`        | VARCHAR | inferred                         | Pin the secret type used for token resolution (e.g. `quack`). |
+| `TOKEN`       | VARCHAR | *(unset)*                        | Authentication token. Overrides any matching quack secret on the client side. |
+| `DISABLE_SSL` | BOOLEAN | `true` for local, else `false`   | Force the client transport. Local URIs default to plain HTTP. |
+| `TYPE`        | VARCHAR | inferred                         | Pin the secret type used for token resolution (e.g.,  `quack`). |
 
 ## Settings
 

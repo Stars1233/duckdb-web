@@ -30,7 +30,7 @@ LOAD quack;
 -- Register the credentials once per session.
 CREATE SECRET quack_credentials (
     TYPE quack,
-    SCOPE '⟨uri⟩',                  -- e.g. 'quack:54.1.2.3.nip.io:443'
+    SCOPE '⟨uri⟩',                  -- e.g., 'quack:54.1.2.3.nip.io:443'
     TOKEN '⟨token⟩'
 );
 

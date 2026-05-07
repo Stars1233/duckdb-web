@@ -64,10 +64,10 @@ The arguments are always `VARCHAR`. Authentication takes three; authorization ta
 
 | Hook | First arg | Second arg | Third arg |
 |------|-----------|------------|-----------|
-| Auth  | Server-generated session id (random 32-char). Becomes the `quack_connection_id` for that client. | The token the client sent. | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
+| Auth  | Server-generated session id (random 32-char string). Becomes the `quack_connection_id` for that client. | The token the client sent. | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
 | Authz | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg). | The full SQL text the client wants to execute. | *(not used)* |
 
-The first arg of the authz hook lets you correlate against state your auth hook recorded, e.g. mapping a connection id to a user name.
+The first argument of the `authz` hook lets you correlate against state your `auth` hook recorded, e.g., mapping a connection id to a user name.
 
 The callbacks run in a **fresh, transient server-side connection**. That means they can read tables, call other UDFs, and reference extensions, but each invocation starts a new session and cannot rely on session-local state.
 
@@ -79,7 +79,7 @@ The cleanest way to plug in custom auth is a `MACRO`. No extension required.
 
 ### Example: Multi-Token Table
 
-Authenticate against a small table of allowed tokens (e.g. one per user):
+Authenticate against a small table of allowed tokens (e.g., one per user):
 
 ```sql
 CREATE TABLE rpc_tokens (auth_token VARCHAR, user_name VARCHAR);
