@@ -41,12 +41,10 @@ Both callbacks can be replaced with user-supplied code, including plain SQL macr
 
 Two settings hold the **name** of the function to call:
 
-<div class="monospace_table"></div>
-
-| Setting                       | Default                   | Called when |
-|-------------------------------|---------------------------|-------------|
-| `quack_authentication_function` | `quack_check_token`        | A new client connects (`CONNECTION_REQUEST`). |
-| `quack_authorization_function`  | `quack_nop_authorization`  | A client issues a query (`PREPARE_REQUEST`). |
+| Setting                         | Default                   | Called when                                   |
+| ------------------------------- | ------------------------- | --------------------------------------------- |
+| `quack_authentication_function` | `quack_check_token`       | A new client connects (`CONNECTION_REQUEST`). |
+| `quack_authorization_function`  | `quack_nop_authorization` | A client issues a query (`PREPARE_REQUEST`).  |
 
 The server invokes them by running:
 
@@ -62,10 +60,10 @@ Both calls expect a `BOOLEAN` return: `true` admits the request, anything else (
 
 The arguments are always `VARCHAR`. Authentication takes three; authorization takes two:
 
-| Hook | First arg | Second arg | Third arg |
-|------|-----------|------------|-----------|
-| Auth  | Server-generated session id (random 32-char string). Becomes the `quack_connection_id` for that client. | The token the client sent. | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
-| Authz | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg). | The full SQL text the client wants to execute. | *(not used)* |
+| Hook    | First argument                                                                                          | Second argument                                | Third argument                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `auth`  | Server-generated session id (random 32-char string). Becomes the `quack_connection_id` for that client. | The token the client sent.                     | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
+| `authz` | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg).  | The full SQL text the client wants to execute. | *(not used)*                                                                            |
 
 The first argument of the `authz` hook lets you correlate against state your `auth` hook recorded, e.g., mapping a connection id to a user name.
 
@@ -82,19 +80,19 @@ The cleanest way to plug in custom auth is a `MACRO`. No extension required.
 Authenticate against a small table of allowed tokens (e.g., one per user):
 
 ```sql
-CREATE TABLE rpc_tokens (auth_token VARCHAR, user_name VARCHAR);
-INSERT INTO rpc_tokens VALUES
+CREATE TABLE quack_tokens (auth_token VARCHAR, user_name VARCHAR);
+INSERT INTO quack_tokens VALUES
     ('alice-key-123', 'alice'),
     ('bob-key-456',   'bob');
 
 CREATE MACRO check_token(sid, client_token, server_token) AS (
-    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = client_token)
+    EXISTS (SELECT 1 FROM quack_tokens WHERE auth_token = client_token)
 );
 
 SET quack_authentication_function = 'check_token';
 ```
 
-Now any client whose token is in `rpc_tokens` is admitted; everyone else is rejected. Adding / removing users is a regular `INSERT` / `DELETE`.
+Now any client whose token is in `quack_tokens` is admitted; everyone else is rejected. Adding / removing users is a regular `INSERT` / `DELETE`.
 
 ### Example: Dev Mode (Always Allow)
 
@@ -121,20 +119,20 @@ SET quack_authorization_function = 'read_only';
 
 ### Example: Per-User ACL
 
-Pair this with a custom auth hook that records `(sid → user)` so authorization can look up who is asking. Because macros can't write, the recording side has to be a scalar UDF; the authz side can stay a macro:
+Pair this with a custom auth hook that records `(sid → user)` so authorization can look up who is asking. Because macros can't write, the recording side has to be a scalar UDF; the authorization side can stay a macro:
 
 ```sql
 -- (populated by the auth UDF when a client connects)
-CREATE TABLE rpc_sessions (sid VARCHAR PRIMARY KEY, user_name VARCHAR);
+CREATE TABLE quack_sessions (sid VARCHAR PRIMARY KEY, user_name VARCHAR);
 
 -- per-user query allowlist (your own data model)
-CREATE TABLE rpc_user_acls (user_name VARCHAR, query_kind VARCHAR);
+CREATE TABLE quack_user_acls (user_name VARCHAR, query_kind VARCHAR);
 
 CREATE MACRO acl_check(sid, query) AS (
     EXISTS (
         SELECT 1
-        FROM rpc_sessions s
-        JOIN rpc_user_acls a ON a.user_name = s.user_name
+        FROM quack_sessions s
+        JOIN quack_user_acls a ON a.user_name = s.user_name
         WHERE s.sid = sid
           AND regexp_matches(upper(trim(query)), '^' || a.query_kind || '\b')
     )
@@ -158,11 +156,11 @@ A self-contained example: a server that requires per-user tokens and limits each
 ```sql
 -- On the server session, before quack_serve:
 
-CREATE TABLE rpc_tokens (auth_token VARCHAR, user_name VARCHAR);
-INSERT INTO rpc_tokens VALUES ('analytics-team-token', 'analytics');
+CREATE TABLE quack_tokens (auth_token VARCHAR, user_name VARCHAR);
+INSERT INTO quack_tokens VALUES ('analytics-team-token', 'analytics');
 
 CREATE MACRO check_token(sid, client_token, server_token) AS (
-    EXISTS (SELECT 1 FROM rpc_tokens WHERE auth_token = client_token)
+    EXISTS (SELECT 1 FROM quack_tokens WHERE auth_token = client_token)
 );
 
 CREATE MACRO read_only(sid, query) AS (
@@ -175,4 +173,4 @@ SET quack_authorization_function  = 'read_only';
 CALL quack_serve('quack:localhost', token => 'analytics-team-token');
 ```
 
-A client with the right token now connects and can run `SELECT`s, but `INSERT INTO quack.t …` issued through the standard SQL path will fail at authz time.
+A client with the right token now connects and can run `SELECT`s, but `INSERT INTO quack.t ...` issued through the standard SQL path will fail at authorization time.
