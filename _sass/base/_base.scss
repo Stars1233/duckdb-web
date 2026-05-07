@@ -11,6 +11,10 @@
 	box-sizing: border-box;
 }
 
+html {
+	background: var(--main-body-background-color, #FAFAFA);
+}
+
 body{
 	color: var(--main-text-primary-color, #0D0D0D);
 	background: var(--main-body-background-color, #FAFAFA);
