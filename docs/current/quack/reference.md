@@ -11,7 +11,7 @@ This page lists every function, setting, and log type exposed by the Quack exten
 
 | Function                                                                              | Description                                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `quack_serve(uri, token := ⟨t⟩, allow_other_hostname := false, disable_ssl := false)` | Start a server on `uri`. Localhost-only by default. Pass `token` to set the server's authentication token explicitly; otherwise one is generated. Returns listen URI, URL, and the auth token. |
+| `quack_serve(uri, token := ⟨t⟩, allow_other_hostname := false, disable_ssl := false)` | Start a server on `uri`. Localhost-only by default. Pass `token` to set the server's authentication token explicitly (minimum 4 characters); otherwise one is generated. Returns listen URI, URL, and the auth token. |
 | `quack_stop(uri)`                                                                     | Stop the server listening on `uri`.                                                                                                                                                            |
 | `quack_identify(name, provider, hostname, region, meta)`                              | Set this node's `whoami` identity fields. Any subset can be supplied.                                                                                                                          |
 | `whoami()`                                                                            | Table macro returning identity + runtime info for the current node.                                                                                                                            |
@@ -44,6 +44,8 @@ This page lists every function, setting, and log type exposed by the Quack exten
 All settings are regular DuckDB session / global options. Set with `SET ⟨name⟩ = ⟨value⟩`{:.language-sql .highlight} or `SET GLOBAL`{:.language-sql .highlight}.
 
 ### Authentication / Authorization
+
+The auth callbacks are evaluated on a fresh server-side connection every time, so the two settings below are **global-scoped** (`SET GLOBAL`). A plain `SET` on these is forwarded to the global slot automatically. Use `RESET GLOBAL` to restore the default; a plain `RESET` only clears the session view and the auth path will keep reading the stale global value.
 
 | Setting                         | Type    | Default                   | Description                                                                                                                |
 | ------------------------------- | ------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |

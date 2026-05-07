@@ -89,7 +89,7 @@ CREATE MACRO check_token(sid, client_token, server_token) AS (
     EXISTS (SELECT 1 FROM quack_tokens WHERE auth_token = client_token)
 );
 
-SET quack_authentication_function = 'check_token';
+SET GLOBAL quack_authentication_function = 'check_token';
 ```
 
 Now any client whose token is in `quack_tokens` is admitted; everyone else is rejected. Adding / removing users is a regular `INSERT` / `DELETE`.
@@ -100,7 +100,7 @@ Useful when iterating locally:
 
 ```sql
 CREATE MACRO yolo_auth(sid, client_token, server_token) AS (true);
-SET quack_authentication_function = 'yolo_auth';
+SET GLOBAL quack_authentication_function = 'yolo_auth';
 ```
 
 ## Overriding Authorization
@@ -114,7 +114,7 @@ CREATE MACRO read_only(sid, query) AS (
     regexp_matches(upper(trim(query)), '^(SELECT|FROM|WITH|EXPLAIN|DESCRIBE|SHOW)\b')
 );
 
-SET quack_authorization_function = 'read_only';
+SET GLOBAL quack_authorization_function = 'read_only';
 ```
 
 ### Example: Per-User ACL
@@ -138,7 +138,7 @@ CREATE MACRO acl_check(sid, query) AS (
     )
 );
 
-SET quack_authorization_function = 'acl_check';
+SET GLOBAL quack_authorization_function = 'acl_check';
 ```
 
 ## Beyond SQL Macros
@@ -154,8 +154,6 @@ DuckDB extensions can be written in C++ (the primary language) or any language w
 A self-contained example: a server that requires per-user tokens and limits each user to read-only queries.
 
 ```sql
--- On the server session, before quack_serve:
-
 CREATE TABLE quack_tokens (auth_token VARCHAR, user_name VARCHAR);
 INSERT INTO quack_tokens VALUES ('analytics-team-token', 'analytics');
 
@@ -167,10 +165,10 @@ CREATE MACRO read_only(sid, query) AS (
     regexp_matches(upper(trim(query)), '^(SELECT|FROM|WITH|EXPLAIN)\b')
 );
 
-SET quack_authentication_function = 'check_token';
-SET quack_authorization_function  = 'read_only';
-
 CALL quack_serve('quack:localhost', token => 'analytics-team-token');
+
+SET GLOBAL quack_authentication_function = 'check_token';
+SET GLOBAL quack_authorization_function  = 'read_only';
 ```
 
 A client with the right token now connects and can run `SELECT`s, but `INSERT INTO quack.t ...` issued through the standard SQL path will fail at authorization time.
