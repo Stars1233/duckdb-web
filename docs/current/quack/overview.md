@@ -31,6 +31,7 @@ A server is started from an existing DuckDB session. Everything that the session
 
 To start listening on localhost, run:
 
+{:.codebox-server}
 ```sql
 LOAD quack;
 CALL quack_serve('quack:localhost');
