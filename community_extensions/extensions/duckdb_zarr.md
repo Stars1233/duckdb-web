@@ -40,10 +40,10 @@ docs:
 
     This makes it practical to inspect Zarr metadata and query supported dense arrays with SQL directly inside DuckDB.
 
-extension_star_count: 2
-extension_star_count_pretty: 2
-extension_download_count: 444
-extension_download_count_pretty: 444
+extension_star_count: 3
+extension_star_count_pretty: 3
+extension_download_count: 467
+extension_download_count_pretty: 467
 image: '/images/community_extensions/social_preview/preview_community_extension_duckdb_zarr.png'
 layout: community_extension_doc
 ---

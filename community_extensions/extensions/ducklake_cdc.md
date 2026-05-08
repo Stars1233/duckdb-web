@@ -22,10 +22,10 @@ repo:
   github: "ekkuleivonen/ducklake-cdc-extension"
   ref: "723dcf85f6051215689e4f07b08a4bc6017c165e"
 
-extension_star_count: 5
-extension_star_count_pretty: 5
-extension_download_count: 326
-extension_download_count_pretty: 326
+extension_star_count: 6
+extension_star_count_pretty: 6
+extension_download_count: 399
+extension_download_count_pretty: 399
 image: '/images/community_extensions/social_preview/preview_community_extension_ducklake_cdc.png'
 layout: community_extension_doc
 ---
