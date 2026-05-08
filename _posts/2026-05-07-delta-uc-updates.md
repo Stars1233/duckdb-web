@@ -124,7 +124,7 @@ assets, including tables, volumes, models, and functions, across engines and
 clouds. It turns your data lake into a lakehouse, and gives you a single place
 to discover, audit, and control access to your data, regardless of what's
 reading or writing it. DuckDB's Unity Catalog extension is built upon the
-[Unity Catalog Open API](https://docs.unitycatalog.io/). There are two main
+[Unity Catalog Open API](https://go.unitycatalog.io/apidocs). There are two main
 implementations: [OSS Unity Catalog](https://unitycatalog.io/), which you can
 self-host (and Docker-ify in minutes), and [Databricks Unity
 Catalog](https://docs.databricks.com/aws/en/data-governance/unity-catalog/),
@@ -251,13 +251,13 @@ today in both [OSS](https://www.unitycatalog.io/) and
 [Databricks](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
 Unity Catalog.
 
-The big feature in CMT is coordinated concurrent writes. Without CMT,
+The big feature in CMT is Catalog Commits, which enables coordinated concurrent writes. Without Catalog Commits,
 DuckDB writes go directly to the Delta log. While modern storage backends
 prevent outright lost writes, UC is left out of the loop entirely. Its
 metadata, audit trail, and statistics fall out of sync with the actual table
 state, and other engines querying through UC may see a stale view.
 
-CMT fixes this: every write is staged and registered through UC before it
+Catalog Commits (CC) fixes this: every write is staged and registered through UC before it
 becomes visible. UC acts as the commit arbiter, preserving first writer
 commits, and sending a conflict error to later writers. This matters
 wherever multiple writers are appending simultaneously, e.g., parallel ETL
@@ -266,12 +266,12 @@ writer works independently; UC ensures exactly one commit lands per version and
 keeps its own catalog in sync with every one of them.
 
 Consistent reads and audit history are already inherent to Delta and UC
-respectively. CMT doesn't add functionality, it just ensures UC stays in sync with
-every commit. And CMT coordinates commits per table; there is no cross-table
+respectively. CC doesn't add functionality, it just ensures UC stays in sync with
+every commit. And Catalog Commits coordinate per table; there is no cross-table
 atomicity. If you write to two tables in the same `BEGIN` / `COMMIT` block,
 each table commits independently.
 
-To opt a table into CMT, set the `delta.feature.catalogManaged` table property
+To opt a table into CMT (and therefore CC), set the `delta.feature.catalogManaged` table property
 at creation time. This is done via Spark or the UC CLI, as DuckDB's Unity Catalog
 extension does not yet support `CREATE TABLE` DDL:
 
@@ -286,7 +286,7 @@ CREATE TABLE my_catalog.my_schema.concurrent_tbl (
 TBLPROPERTIES ('delta.feature.catalogManaged' = 'supported');
 ```
 
-Once CMT-enabled, DuckDB writes go through UC's commit staging automatically —
+Once enabled, DuckDB writes go through UC's commit staging automatically —
 the `INSERT` syntax is unchanged:
 
 ```sql
@@ -304,8 +304,8 @@ retry. Next, let's look at how UC handles the race.
 
 ### Racing Commits
 
-To see how CMT arbitrates, we launched 20 concurrent DuckDB
-writers, 8 at a time, all inserting into the same CMT table:
+To see how Catalog Commits arbitrates, we launched 20 concurrent DuckDB
+writers, 8 at a time, all inserting into the same managed table:
 
 ```batch
 seq 1 20 | xargs -P 8 -I{} scripts/unity/05-cmc/write-single {}
