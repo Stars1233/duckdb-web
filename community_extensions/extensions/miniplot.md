@@ -74,8 +74,8 @@ docs:
 
 extension_star_count: 21
 extension_star_count_pretty: 21
-extension_download_count: 832
-extension_download_count_pretty: 832
+extension_download_count: 828
+extension_download_count_pretty: 828
 image: '/images/community_extensions/social_preview/preview_community_extension_miniplot.png'
 layout: community_extension_doc
 ---

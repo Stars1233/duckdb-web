@@ -74,10 +74,10 @@ docs:
 
     See the [documentation](https://github.com/the-miint/duckdb-miint) for complete details.
 
-extension_star_count: 4
-extension_star_count_pretty: 4
-extension_download_count: 1043
-extension_download_count_pretty: 1.0k
+extension_star_count: 5
+extension_star_count_pretty: 5
+extension_download_count: 943
+extension_download_count_pretty: 943
 image: '/images/community_extensions/social_preview/preview_community_extension_miint.png'
 layout: community_extension_doc
 ---

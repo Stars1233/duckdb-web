@@ -38,8 +38,8 @@ docs:
 
 extension_star_count: 19
 extension_star_count_pretty: 19
-extension_download_count: 27139
-extension_download_count_pretty: 27.1k
+extension_download_count: 27811
+extension_download_count_pretty: 27.8k
 image: '/images/community_extensions/social_preview/preview_community_extension_gcs.png'
 layout: community_extension_doc
 ---
