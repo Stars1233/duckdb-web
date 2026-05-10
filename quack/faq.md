@@ -114,7 +114,7 @@ Please follow the [installation instructions](https://duckdb.org/quack) and the 
 
 <div class="answer" markdown="1">
 
-Quack uses HTTP v2.0 for communication. This allows Quack to work in environments with firewalls, load balancers, etc. You can provide your own encryption – see the [“Reserve Proxy” guide]({% link docs/current/quack/guides/reverse_proxy.md %}).
+Quack uses HTTP v2.0 for communication. This allows Quack to work in environments with firewalls, load balancers, etc. You can provide your own encryption – see the [“Reserve Proxy” guide]({% link docs/current/quack/setup/reverse_proxy.md %}).
 
 </div>
 
@@ -163,7 +163,7 @@ Yes, we designed Quack to be a high-performance protocol for both bulk operation
 
 <div class="answer" markdown="1">
 
-Please consult the Quack documentation's [Security](https://duckdb.org/docs/current/quack/security) page and the [Securing Quack with a Reverse Proxy](http://duckdb.org/docs/current/quack/guides/reverse_proxy) page.
+Please consult the Quack documentation's [Security](https://duckdb.org/docs/current/quack/security) page and the [Securing Quack with a Reverse Proxy](http://duckdb.org/docs/current/quack/setup/reverse_proxy) page.
 
 </div>
 

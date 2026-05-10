@@ -1247,8 +1247,8 @@
               "url": "security"
             },
             {
-              "page": "Quack Guides",
-              "slug": "guides",
+              "page": "Setup",
+              "slug": "setup",
               "subsubfolderitems": [
                 {
                   "page": "Overview",

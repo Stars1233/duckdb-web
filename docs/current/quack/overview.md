@@ -9,7 +9,7 @@ title: Quack Remote Protocol
 The Quack extension turns a DuckDB instance into a server that other DuckDB instances (clients) can connect to over HTTP.
 
 This page covers the protocol at a glance and walks through basic usage on both sides of the wire.
-For the full list of functions, settings, and logging knobs, see the [Reference]({% link docs/current/quack/reference.md %}). For deployment posture, TLS, and authentication / authorization, see [Security]({% link docs/current/quack/security.md %}). For user guides, see [Guides]({% link docs/current/quack/guides/overview.md %}).
+For the full list of functions, settings, and logging knobs, see the [Reference]({% link docs/current/quack/reference.md %}). For deployment posture, TLS, and authentication / authorization, see [Security]({% link docs/current/quack/security.md %}). For user guides, see [Guides]({% link docs/current/quack/setup/overview.md %}).
 
 > Warning Quack is under active development and the protocol, function names, settings, and defaults are still subject to change. This page documents the beta release of Quack, available in DuckDB v1.5.2, shipped via the `core_nightly` repository.
 
@@ -48,7 +48,7 @@ LOAD quack;
 CALL quack_serve('quack:0.0.0.0:9494', allow_other_hostname => true);
 ```
 
-When you do this you should front the server with a TLS-terminating reverse proxy. See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/guides/reverse_proxy.md %}).
+When you do this you should front the server with a TLS-terminating reverse proxy. See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/setup/reverse_proxy.md %}).
 
 ### URI Format
 
