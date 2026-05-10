@@ -279,7 +279,6 @@ There are several third-party solutions providing remote access to DuckDB (e.g.,
 
 <div class="answer" markdown="1">
 
-
 Quack is a remote protocol for DuckDB that enables client-server use of DuckDB. DuckLake is an open lakehouse format supported by different data management systems, including DuckDB itself but also Apache Spark, Apache DataFusion and Trino.
 
 Quack and DuckLake share a few similarities:
@@ -300,6 +299,20 @@ However, Quack and DuckLake are also fundamentally different.
   * DuckLake requires a central catalog database. A typical DuckLake setup includes object storage (where the data is stored in Parquet format) and a catalog database.
 
 Quack and DuckLake can be combined in different combinations. For example, if you have a huge database or need time travel capabilities, consider using DuckLake as that is served through a DuckDB instance through Quack.
+
+</div>
+
+</div>
+
+<!-- ----- ----- ----- ----- ----- ----- Q&A entry ----- ----- ----- ----- ----- ----- -->
+
+<div class="qa-wrap" markdown="1">
+
+### Can I use DuckDB with Quack as the catalog database for DuckLake?
+
+<div class="answer" markdown="1">
+
+Not yet, but we are working on it!
 
 </div>
 
