@@ -29,7 +29,7 @@ max_page_width: large
 				</div>
 			</div>
 			<div class="quack-protocol-card-meta">
-				<span class="tag">Quack v0.1</span>
+				<span class="tag">Quack extension</span>
 				<div class="works-with">
 					<span class="works-with-label">Works with</span>
 					<a class="tag" href="{{ site.url }}/">DuckDB</a>
@@ -57,7 +57,7 @@ max_page_width: large
 			<h2>Introducing Quack</h2>
 			<p>
 				Hannes Mühleisen introduced Quack at the AI Council 2026.<br>
-				Watch his full talk <a href="{% link _library/2026-05-12-super-secret-next-big-thing-for-duckdb.md %}">“The Super-Secret Next Big Thing for DuckDB”</a>.
+				Watch his full talk, the <a href="{% link _library/2026-05-12-super-secret-next-big-thing-for-duckdb.md %}">“Super-Secret Next Big Thing for DuckDB”</a>.
 			</p>
 		</div>
 	</div>
@@ -325,59 +325,64 @@ pip install duckdb
 	</div>
 
 	<div class="frequentlyaskedquestions">
+
 		<div class="qa-wrap">
-			<h3>
-				What is Quack?
-			</h3>
+
+			<h3>What is Quack?</h3>
+
 			<div class="answer">
-				TODO
+				<p>Quack allows DuckDB to connect to a DuckDB server through the <code class="language-plaintext highlighter-rouge">quack:</code> protocol. You can think of Quack as a Remote Procedure Call (RPC) protocol for DuckDB. Quack enables DuckDB instances to talk to each other, effectively turning DuckDB into a client-server database management system, where both the client and the server are DuckDB instances.</p>
 			</div>
+
 		</div>
 
 		<div class="qa-wrap">
-			<h3>
-				When should I use Quack?
-			</h3>
+
+			<h3>Why is it called Quack?</h3>
+
 			<div class="answer">
-				TODO
+				<p>Mallard ducks communicate by <a href="https://en.wikipedia.org/wiki/Duck#Communication">quacking</a>, so it's only fair that DuckDB instances communicate through the protocol <code class="language-plaintext highlighter-rouge">quack</code>.</p>
 			</div>
+
 		</div>
 
 		<div class="qa-wrap">
-			<h3>
-				Can I use Quack for transactional workloads?
-			</h3>
+
+			<h3>When should I use Quack?</h3>
+
 			<div class="answer">
-				TODO
+				<p>Quack can be beneficial in a number of scenarios, including the following:</p>
+
+				<ul>
+					<li>You need concurrent read-write access to the same DuckDB database.</li>
+					<li>Your data is on a server and you want to move the computation as close to the data as possible.</li>
+					<li>You have a powerful server that can process the data but would like to see the results on your local computer.</li>
+					<li>And many more – we are excited to see what the community comes up with.</li>
+				</ul>
 			</div>
+
 		</div>
 
 		<div class="qa-wrap">
-			<h3>
-				Does Quack change anything about the embedded model?
-			</h3>
+
+			<h3>Can I use DuckDB with Quack for transactional (OLTP) workloads?</h3>
+
 			<div class="answer">
-				TODO
+			    <p>Yes. DuckDB with Quack can handle a few thousand writes per second on a server with 8 CPUs and 32 GB RAM. See <a href="https://duckdb.org/2026/05/12/quack-remote-protocol">the benchmarks in our announcement blog post</a>.</p>
 			</div>
+
 		</div>
 
 		<div class="qa-wrap">
-			<h3>
-				How do I get started?
-			</h3>
+
+			<h3>Can I still run DuckDB as an in-process database?</h3>
+
 			<div class="answer">
-				TODO
+				<p>Yes, DuckDB as an in-process database will continue working just as it did before, and we will treat the in-process deployment model as a first-class citizen in the DuckDB ecosystem.</p>
 			</div>
+
 		</div>
 
-		<div class="qa-wrap">
-			<h3>
-				How does the protocol work?
-			</h3>
-			<div class="answer">
-				TODO
-			</div>
-		</div>
 	</div>
 
 	<div class="cta">
