@@ -704,9 +704,8 @@ body.landing{
 						}
 					}
 				}
-				&:first-child .protocol-tags .tag{
+				&.quack .protocol-tags .tag{
 					font-family: $fontMono;
-					text-transform: uppercase;
 				}
 			}
 		}
