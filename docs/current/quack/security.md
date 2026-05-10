@@ -27,7 +27,7 @@ For every database call, there are two distinct decisions to be made:
 
 Quack runs these as two separate hooks: the authenticatiopn when a client first connects and the authorization before each query the client wants to issue.
 
-### Defaults
+### Default Configuration
 
 Both hooks ship with built-in defaults that are suitable for local development and single-user deployments, and each is exposed as an overridable callback for deployments with stricter requirements.
 
@@ -109,7 +109,7 @@ SELECT ⟨quack_authorization_function⟩(⟨connection_id⟩, ⟨query⟩);
 
 The arguments are defined as follows:
 
-* `connection_id`: The `quack_connection_id` of the calling client (i.e., the same id the authentication hook saw as its `session_id` argument).
+* `connection_id`: The `quack_connection_id` of the calling client (i.e., the same id the [authentication hook](#authentication-hook) saw as its `session_id` argument).
 * `query`: The full SQL text the client wants to execute.
 
 #### Overriding Authorization
@@ -119,46 +119,24 @@ Authorization runs once per `PREPARE_REQUEST`, with the connection id and the fu
 ##### Example: Read-Only
 
 ```sql
-CREATE MACRO read_only(sid, query) AS (
-    regexp_matches(upper(trim(query)), '^(SELECT|FROM|WITH|EXPLAIN|DESCRIBE|SHOW)\b')
-);
+CREATE MACRO read_only(sid, query) AS
+    regexp_matches(upper(trim(query)), '^(SELECT|FROM|WITH|EXPLAIN|DESCRIBE|SHOW)\b');
 
 SET GLOBAL quack_authorization_function = 'read_only';
 ```
 
-##### Example: Per-User Access Control List
-
-Pair this with a custom auth hook that records `(sid → user)` so authorization can look up who is asking. Because macros can't write, the recording side has to be a scalar UDF. The authorization side can be a macro:
-
-```sql
--- (populated by the auth UDF when a client connects)
-CREATE TABLE quack_sessions (sid VARCHAR PRIMARY KEY, user_name VARCHAR);
-
--- per-user query allowlist (your own data model)
-CREATE TABLE quack_user_acls (user_name VARCHAR, query_kind VARCHAR);
-
-CREATE MACRO acl_check(sid, query) AS (
-    EXISTS (
-        SELECT 1
-        FROM quack_sessions s
-        JOIN quack_user_acls a ON a.user_name = s.user_name
-        WHERE s.sid = sid
-          AND regexp_matches(upper(trim(query)), '^' || a.query_kind || '\b')
-    )
-);
-
-SET GLOBAL quack_authorization_function = 'acl_check';
-```
+For more involved authorization functions, see the [Beyond SQL Macros](#beyond-sql-macros) section.
 
 ## Beyond SQL Macros
 
-SQL macros cover most authentication and authorization cases, but a macro body is restricted to a single expression and cannot execute DML directly: there is no `INSERT`, `UPDATE`, or `DELETE` inside a macro. For policies that need to record every call to a table, maintain in-process state across calls, or otherwise drive imperative logic, register a scalar function via a DuckDB extension instead.
+SQL macros cover most authentication and authorization cases, but a macro body is restricted to a single expression and cannot execute DML directly: there is no `INSERT`, `UPDATE`, or `DELETE` inside a macro.
+For policies that need to record every call to a table, maintain in-process state across calls, or otherwise drive imperative logic, register a scalar function via a DuckDB extension instead.
 
-DuckDB extensions can be written in C++ (the primary language) or any language with bindings to DuckDB's C extension API, including Rust, C, and Go. The registered function must expose the same `(VARCHAR, VARCHAR) → BOOLEAN` signature as the SQL macros above. Once the extension is loaded, point `quack_authentication_function` or `quack_authorization_function` at the function name.
+DuckDB extensions can be written in C++ (the primary language) or any language with bindings to DuckDB's C extension API, including Rust, C, and Go. The registered authentication or authorization function must expose the same `(VARCHAR, ...) → BOOLEAN` signature as the SQL macros above. Once the extension is loaded, point `quack_authentication_function` or `quack_authorization_function` at the function name.
 
 > Python UDFs registered through `con.create_function` are scoped to the connection that created them. Quack invokes each callback on a fresh server-side connection, so Python UDFs are not visible at dispatch time and cannot be used as authentication or authorization callbacks. Register the function via a DuckDB extension to make it globally visible.
 
-## Putting It All Together
+### Example: Read-Only Queriers
 
 A self-contained example: a server that requires per-user tokens and limits each user to read-only queries.
 
@@ -181,3 +159,28 @@ SET GLOBAL quack_authorization_function  = 'read_only';
 ```
 
 A client with the right token now connects and can run `SELECT`s, but `INSERT INTO quack.t ...` issued through the standard SQL path will fail at authorization time.
+
+### Example: Per-User Access Control List
+
+To implement per-user access control list (ACL), create a custom authentication hook that records `sid` → `user` pairs so authorization can look up who is asking.
+Because macros can't write, the recording side has to be a scalar UDF defined e.g. by a custom DuckDB extension. The authorization side can be a macro:
+
+```sql
+-- (populated by the auth UDF when a client connects)
+CREATE TABLE quack_sessions (sid VARCHAR PRIMARY KEY, user_name VARCHAR);
+
+-- per-user query allowlist (your own data model)
+CREATE TABLE quack_user_acls (user_name VARCHAR, query_kind VARCHAR);
+
+CREATE MACRO acl_check(sid, query) AS (
+    EXISTS (
+        SELECT 1
+        FROM quack_sessions s
+        JOIN quack_user_acls a ON a.user_name = s.user_name
+        WHERE s.sid = sid
+          AND regexp_matches(upper(trim(query)), '^' || a.query_kind || '\b')
+    )
+);
+
+SET GLOBAL quack_authorization_function = 'acl_check';
+```
