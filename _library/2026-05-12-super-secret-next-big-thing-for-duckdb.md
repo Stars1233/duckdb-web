@@ -13,7 +13,9 @@ pill: "AI Council 2026"
 
 |-------|-------|
 | **Event** | [AI Council 2026](https://aicouncil.com) |
+| **Talk page** | [Super-Secret Next Big Thing for DuckDB](https://aicouncil.com/talks26/super-secret-next-big-thing-for-duckdb) |
 | **Speaker** | [Hannes Mühleisen (DuckDB Labs)](https://aicouncil.com/profile/hannes-m%C3%BChleisen) |
+| **Slide deck** | [Download](https://blobs.duckdb.org/slides/hannes-muehleisen-quack-ai-council-2026.pdf) |
 
 ## Synopsis
 
