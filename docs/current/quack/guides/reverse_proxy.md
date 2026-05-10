@@ -3,15 +3,16 @@ layout: docu
 title: Securing Quack with a Reverse Proxy
 ---
 
-The Quack server speaks plain HTTP only and binds to localhost by default. See [Security]({% link docs/current/quack/security.md %}) for the rationale. For any deployment beyond local-only, the recommended pattern is the same as for any other HTTP-based database / application server: put a battle-tested HTTP reverse proxy in front of it, and let the proxy terminate TLS.
+The Quack server speaks plain HTTP only and binds to localhost by default. See [Security]({% link docs/current/quack/security.md %}) for the rationale behind these configurations.
+For any deployment beyond local-only, the recommended pattern is the same as for any other HTTP-based database / application server: put a proven HTTP reverse proxy in front of it, and let the proxy terminate TLS.
 
-The Quack client cooperates with this: for non-local URIs it assumes HTTPS by default, so a properly fronted server "just works" from the client side too.
+The Quack client cooperates with this: for non-local URIs it assumes HTTPS by default, so a properly fronted server “just works” from the client side too.
 
 This guide walks through three setups, in order of likely usefulness:
 
 1. A **local TLS test setup** with Caddy, so you can exercise the full HTTPS path on your machine.
-2. **Caddy + Let's Encrypt** in production.
-3. **nginx + Let's Encrypt** in production.
+2. **nginx + Let's Encrypt** in production.
+3. **Caddy + Let's Encrypt** in production.
 
 The two production setups are interchangeable. Pick whichever fits your operational stack.
 
@@ -38,7 +39,7 @@ localhost:8443 {
 Then start Caddy:
 
 ```bash
-brew install caddy            # macOS; equivalents exist on Linux
+brew install caddy # macOS, for other platforms see https://caddyserver.com/docs/install
 caddy run --config Caddyfile
 ```
 
@@ -46,65 +47,31 @@ The first run will prompt for elevation to install Caddy's local CA into your sy
 
 ### 2. Start Quack and Connect Through the Proxy
 
-In one DuckDB session, start the server (this prints an auth token):
+In one DuckDB session, start the server (this prints an authentication token):
 
+{:.codebox-server}
 ```sql
 CALL quack_serve('quack:localhost');
 ```
 
-In another session, connect through Caddy on `:8443`. Local URIs default to plain HTTP, so you have to **force SSL on** explicitly:
+In the client session, connect through Caddy on `:8443`. Local URIs default to plain HTTP, so you have to **force SSL on** explicitly:
 
+{:.codebox-server}
 ```sql
 ATTACH 'quack:localhost:8443' AS quack (
-    TOKEN '⟨auth_token-from-quack_serve⟩',
-    disable_ssl false
+    TOKEN '⟨authentication_token-from-quack_serve⟩',
+    DISABLE_SSL false
 );
 
 FROM quack.query('SELECT 42');
--- 42
 ```
 
 If the round-trip succeeds, your traffic just went out as TLS to Caddy, got terminated, and was forwarded as plain HTTP to Quack on `:9494`.
 
-## Caddy + Let's Encrypt
-
-[Caddy](https://caddyserver.com/) auto-provisions certificates from Let's Encrypt and needs almost no configuration. A complete public-facing Quack proxy:
-
-```text
-# /etc/caddy/Caddyfile
-quack.example.com {
-    reverse_proxy 127.0.0.1:9494 {
-        # Equivalent of nginx `proxy_buffering off`. Required so Quack's
-        # streamed FETCH responses pass through immediately instead of
-        # being buffered in Caddy.
-        flush_interval -1
-    }
-
-    # Equivalent of nginx `client_max_body_size`. PREPARE / APPEND bodies
-    # can be much larger than the default request body cap.
-    request_body {
-        max_size 256MB
-    }
-}
-```
-
-Caddy handles certificate issuance and renewal automatically. No `certbot` step.
-
-On the Quack side, start the server bound to localhost (the default):
-
-```sql
-CALL quack_serve('quack:localhost');
-```
-
-Clients connect over HTTPS automatically:
-
-```sql
-ATTACH 'quack:quack.example.com' AS quack;   -- HTTPS auto-selected
-```
 
 ## Nginx + Let's Encrypt
 
-The most common choice. A minimal site for a Quack server listening on the loopback interface:
+We expect this to be the most common choice. A minimal site for a Quack server listening on the loopback interface looks as follows:
 
 ```text
 # /etc/nginx/sites-enabled/quack.example.com
@@ -141,12 +108,53 @@ server {
 
 On the Quack side, start the server bound to localhost (the default):
 
+{:.codebox-server}
 ```sql
 CALL quack_serve('quack:localhost');
 ```
 
-Issue the certificate with `certbot --nginx -d quack.example.com`. Clients connect over HTTPS automatically:
+Issue the certificate with `certbot --nginx -d quack.example.com`.
+Clients connect over HTTPS automatically:
 
+{:.codebox-client}
+```sql
+ATTACH 'quack:quack.example.com' AS quack;   -- HTTPS auto-selected
+```
+
+## Caddy + Let's Encrypt
+
+[Caddy](https://caddyserver.com/) auto-provisions certificates from Let's Encrypt and needs almost no configuration. A complete public-facing Quack proxy:
+
+```text
+# /etc/caddy/Caddyfile
+quack.example.com {
+    reverse_proxy 127.0.0.1:9494 {
+        # Equivalent of nginx `proxy_buffering off`. Required so Quack's
+        # streamed FETCH responses pass through immediately instead of
+        # being buffered in Caddy.
+        flush_interval -1
+    }
+
+    # Equivalent of nginx `client_max_body_size`. PREPARE / APPEND bodies
+    # can be much larger than the default request body cap.
+    request_body {
+        max_size 256MB
+    }
+}
+```
+
+Caddy handles certificate issuance and renewal automatically. No `certbot` step is required.
+
+On the Quack side, start the server bound to localhost (the default):
+
+{:.codebox-server}
+```sql
+CALL quack_serve('quack:localhost');
+```
+
+Clients connect over HTTPS automatically:
+
+{:.codebox-client}
 ```sql
 ATTACH 'quack:quack.example.com' AS quack;   -- HTTPS auto-selected
 ```

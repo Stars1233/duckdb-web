@@ -13,7 +13,7 @@ A Quack server exposes the full SQL surface of the underlying DuckDB instance, i
 * The server binds to `localhost` only, non-local hostnames require an explicit `allow_other_hostname => true`.
 * The server does **not** use TLS itself. Involving the TLS for localhost communication only adds dependencies for no real benefit.
 
-> Bestpractice For any deployment beyond local-only, do not expose Quack directly to the internet. We recommend you to put a battle-tested HTTP reverse proxy in front of it and let the proxy terminate TLS.
+> Bestpractice For any deployment beyond local-only, do not expose Quack directly to the internet. We recommend you to put a proven HTTP reverse proxy in front of it and let the proxy terminate TLS.
 
 The Quack client is shipped with these assumptions in mind: for non-local URIs it assumes HTTPS by default, so a properly fronted server "just works" from the client side too.
 See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/guides/reverse_proxy.md %}) for [nginx](https://nginx.org/) and [Caddy recipes](https://caddyserver.com/) (production and local-test).
