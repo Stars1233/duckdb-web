@@ -26,10 +26,10 @@ docs:
   extended_description: >
     Adds support for `decimal_div` and `decimal_avg`
 
-extension_star_count: 1
-extension_star_count_pretty: 1
-extension_download_count: 549
-extension_download_count_pretty: 549
+extension_star_count: 2
+extension_star_count_pretty: 2
+extension_download_count: 601
+extension_download_count_pretty: 601
 image: '/images/community_extensions/social_preview/preview_community_extension_decimal_arithmetic.png'
 layout: community_extension_doc
 ---
