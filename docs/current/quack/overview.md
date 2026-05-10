@@ -11,7 +11,7 @@ The Quack extension turns a DuckDB instance into a server that other DuckDB inst
 This page covers the protocol at a glance and walks through basic usage on both sides of the wire.
 For the full list of functions, settings, and logging knobs, see the [Reference]({% link docs/current/quack/reference.md %}). For deployment posture, TLS, and authentication / authorization, see [Security]({% link docs/current/quack/security.md %}). For user guides, see [Guides]({% link docs/current/quack/guides/overview.md %}).
 
-> Warning Quack is under active development and the protocol, function names, settings, and defaults are still subject to change. This page documents the preview release of Quack, available in DuckDB v1.5.2, shipped via the `core_nightly` repository.
+> Warning Quack is under active development and the protocol, function names, settings, and defaults are still subject to change. This page documents the beta release of Quack, available in DuckDB v1.5.2, shipped via the `core_nightly` repository.
 
 ## Quack in a Nutshell
 
@@ -21,7 +21,7 @@ In short, the Quack protocol and its interactions work as follows:
 * **Client-driven request and response.** Every interaction is initiated by the client. The server does not initiate interactions via pushing.
 * **`application/duckdb` serialization.** Requests and responses are encoded with DuckDB's internal serialization primitives (the same code path used by the [Write-Ahead Log]({% post_url 2024-10-30-analytics-optimized-concurrent-transactions %}#write-ahead-logging-and-checkpointing)). This avoids round-tripping data through an interchange format and keeps complex types (nested, decimals, intervals, ...) lossless across the wire.
 * **Single round-trip per query.** After the initial connection handshake, a query needs only one request–response pair. Large results stream back in chunks via follow-up `FETCH` requests, optionally parallelized on multiple threads.
-* **Default port `9494`.** All URIs use the `quack:` scheme, e.g.,  `quack:hostname:port`.
+* **Default port: `9494`.** All URIs use the `quack:` scheme, e.g., `quack:hostname:port`.
 
 ## Server-Side Usage
 
@@ -42,6 +42,7 @@ This token can also be set explicitly before starting (see [Security]({% link do
 
 By default the server refuses to bind anything other than a local hostname. To listen on an externally-reachable address, pass `allow_other_hostname => true`:
 
+{:.codebox-server}
 ```sql
 LOAD quack;
 CALL quack_serve('quack:0.0.0.0:9494', allow_other_hostname => true);
@@ -67,6 +68,7 @@ You can parse and validate a URI with the `quack_uri_parser(uri, ssl)` scalar fu
 
 To stop a server, run:
 
+{:.codebox-server}
 ```sql
 CALL quack_stop('quack:localhost');
 ```
@@ -85,9 +87,10 @@ Either default can be overridden with the `DISABLE_SSL` configuration option.
 
 ### Stateless Queries with `quack_query`
 
-You can run any SQL against a remote server without attaching it.
+You can run any SQL against a server without attaching it.
 To query a local database via HTTP, run:
 
+{:.codebox-client}
 ```sql
 FROM quack_query(
     'quack:localhost',
@@ -97,6 +100,7 @@ FROM quack_query(
 
 Remote databases use HTTPS by default. To override on a plain-HTTP remote, run:
 
+{:.codebox-client}
 ```sql
 FROM quack_query(
     'quack:remote.com',
@@ -113,6 +117,7 @@ Errors occurring on the server (parse errors, missing tables, etc.) are shown lo
 
 To attach a local database via HTTP, simply run:
 
+{:.codebox-client}
 ```sql
 ATTACH 'quack:localhost' AS remote_db (
     TOKEN '⟨MY_QUACK_TOKEN_01234567890ABCDEF⟩'
@@ -121,6 +126,7 @@ ATTACH 'quack:localhost' AS remote_db (
 
 Attaching remote databases uses HTTPS by default. To override on a plain-HTTP remote:
 
+{:.codebox-client}
 ```sql
 ATTACH 'quack:remote.com' AS remote_db (
     TOKEN '⟨MY_QUACK_TOKEN_01234567890ABCDEF⟩',
@@ -130,6 +136,7 @@ ATTACH 'quack:remote.com' AS remote_db (
 
 Once attached, remote tables look and behave like local ones:
 
+{:.codebox-client}
 ```sql
 CREATE TABLE remote_db.t AS FROM range(10) r(i);  -- DDL on remote
 INSERT INTO remote_db.t VALUES (42);              -- remote writes
@@ -137,6 +144,7 @@ INSERT INTO remote_db.t VALUES (42);              -- remote writes
 
 You can run queries against the remote database:
 
+{:.codebox-client}
 ```sql
 FROM remote_db.t;              -- scan remote table
 FROM remote_db.t WHERE i = 42; -- run filter remotely
@@ -146,6 +154,7 @@ DETACH quack;                  -- detach from the remote database
 
 The attached catalog also exposes a `query` table macro for ad-hoc SQL scoped to that attachment:
 
+{:.codebox-client}
 ```sql
 FROM remote_db.query('SELECT 42');
 ```
@@ -157,6 +166,7 @@ See [Security]({% link docs/current/quack/security.md %}) for the full picture.
 
 We recommend using a [secret]({% link docs/current/configuration/secrets_manager.md %}) scoped to the server URI:
 
+{:.codebox-client}
 ```sql
 CREATE SECRET (
     TYPE quack,
@@ -169,6 +179,7 @@ ATTACH 'quack:localhost' AS remote_db (TYPE quack);
 
 Alternatively, you can pass the token directly, which overrides any matching secret:
 
+{:.codebox-client}
 ```sql
 ATTACH 'quack:localhost' AS remote_db (
     TOKEN '⟨MY_QUACK_TOKEN_01234567890ABCDEF⟩'
@@ -179,6 +190,7 @@ ATTACH 'quack:localhost' AS remote_db (
 
 Each Quack node exposes a `whoami()` table macro that surfaces basic identity and runtime info, useful when proxying to a fleet of servers or when correlating logs:
 
+{:.codebox-client}
 ```sql
 FROM remote_db.query('FROM whoami()');
 ```
@@ -194,6 +206,7 @@ FROM remote_db.query('FROM whoami()');
 
 Identity fields are populated either by setting `whoami_*` options directly or by calling the `quack_identify` helper:
 
+{:.codebox-client}
 ```sql
 CALL quack_identify(
     name => 'analytics-1',

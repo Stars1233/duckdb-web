@@ -9,73 +9,69 @@ This page covers Quack's security posture end to end: what the server exposes, w
 
 A Quack server exposes the full SQL surface of the underlying DuckDB instance, including read and write access to every table the server's session can see. Because of this, the extension ships with conservative defaults that prevent accidental exposure:
 
-* The server generates a **random auth token** at startup, which the client has to supply on every connection.
-* The server binds to `localhost` only; non-local hostnames require an explicit `allow_other_hostname => true`.
-* The server does **not** speak SSL itself. Bringing TLS into the process just for localhost communication adds dependencies for no real benefit.
+* The server generates a **random authentication token** at startup, which the client has to supply on every connection.
+* The server binds to `localhost` only, non-local hostnames require an explicit `allow_other_hostname => true`.
+* The server does **not** use TLS itself. Involving the TLS for localhost communication only adds dependencies for no real benefit.
 
-> Bestpractice For any deployment beyond local-only, do not expose Quack directly to the internet. Put a battle-tested HTTP reverse proxy in front of it and let the proxy terminate TLS.
+> Bestpractice For any deployment beyond local-only, do not expose Quack directly to the internet. We recommend you to put a battle-tested HTTP reverse proxy in front of it and let the proxy terminate TLS.
 
-The Quack client cooperates with this: for non-local URIs it assumes HTTPS by default, so a properly fronted server "just works" from the client side too. See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/guides/reverse_proxy.md %}) for nginx and Caddy recipes (production and local-test).
+The Quack client is shipped with these assumptions in mind: for non-local URIs it assumes HTTPS by default, so a properly fronted server "just works" from the client side too.
+See [Securing Quack with a Reverse Proxy]({% link docs/current/quack/guides/reverse_proxy.md %}) for [nginx](https://nginx.org/) and [Caddy recipes](https://caddyserver.com/) (production and local-test).
 
 ## Authentication and Authorization
 
-Two distinct concerns sit on top of every database connection:
+For every database call, there are two distinct decisions to be made:
 
-* **Authentication**: *who* is the caller? Establishes identity, usually by having the caller supply a credential (a token, a password, a client certificate).
+* **Authentication**: *who* is the caller? Establishes identity, usually by having the caller supply a credential (e.g., a token, a password, a client certificate).
 * **Authorization**: *may they do this?* Establishes whether an already authenticated caller is allowed to run a particular query, against a particular set of objects.
 
-Quack runs these as two separate hooks: one when a client first connects, and one before each query the client wants to issue.
+Quack runs these as two separate hooks: the authenticatiopn when a client first connects and the authorization before each query the client wants to issue.
 
 ### Defaults
 
-Both checks ship with built-in defaults that are suitable for local development and single-user deployments, and each is exposed as an overridable callback for deployments with stricter requirements.
+Both hooks ship with built-in defaults that are suitable for local development and single-user deployments, and each is exposed as an overridable callback for deployments with stricter requirements.
 
-Out of the box:
+Out of the box, they come with the following configuration:
 
-* **Authentication is token-based.** When you call `quack_serve`, the server generates a random token and returns it in the `auth_token` column (or you can supply one explicitly via `quack_serve(uri, token := '...')`). Clients have to present this token on every connection, either through a `quack` secret scoped to the server URI or via the explicit `TOKEN` option on `ATTACH` / `quack_query`. The default authentication callback compares the client-supplied token against the server's stored token.
+* **Authentication is token-based.** When you call `quack_serve`, the server generates a random token and returns it in the `auth_token` column (or you can supply one explicitly via `quack_serve(uri, token := '...')`). Clients have to present this token on every connection, either through a `quack` secret scoped to the server URI or via the explicit `TOKEN` option in the `ATTACH` statement / `quack_query` function call. The default authentication callback compares the client-supplied token against the server's stored token.
 * **Authorization is permissive.** The default authorization callback returns `true` for every query. No further filtering happens.
 
 Both callbacks can be replaced with user-supplied code, including plain SQL macros. See the examples below.
 
 ### The Callback Contract
 
-Two settings hold the **name** of the function to call:
+Two settings hold the **name** of the function to call as a hook for authentication / authorization:
 
 | Setting                         | Default                   | Called when                                   |
 | ------------------------------- | ------------------------- | --------------------------------------------- |
 | `quack_authentication_function` | `quack_check_token`       | A new client connects (`CONNECTION_REQUEST`). |
 | `quack_authorization_function`  | `quack_nop_authorization` | A client issues a query (`PREPARE_REQUEST`).  |
 
-The server invokes them by running:
-
-```sql
--- on every CONNECTION_REQUEST
-SELECT ⟨quack_authentication_function⟩(⟨session_id⟩, ⟨client_token⟩, ⟨server_token⟩);
-
--- on every PREPARE_REQUEST
-SELECT ⟨quack_authorization_function⟩(⟨connection_id⟩, ⟨query⟩);
-```
-
-Both calls expect a `BOOLEAN` return: `true` admits the request, anything else (including a query error) rejects it with "Authentication failed" / "Authorization failed".
-
-The arguments are always `VARCHAR`. Authentication takes three; authorization takes two:
-
-| Hook    | First argument                                                                                          | Second argument                                | Third argument                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `auth`  | Server-generated session id (random 32-char string). Becomes the `quack_connection_id` for that client. | The token the client sent.                     | The token configured on the server (via `quack_serve(token := ...)` or auto-generated). |
-| `authz` | The `quack_connection_id` of the calling client (i.e. the same id the auth hook saw as its first arg).  | The full SQL text the client wants to execute. | *(not used)*                                                                            |
-
-The first argument of the `authz` hook lets you correlate against state your `auth` hook recorded, e.g., mapping a connection id to a user name.
+Both calls need to provide a `BOOLEAN` return: `true` admits the request, anything else (including a query error) rejects it with `Authentication failed` / `Authorization failed`.
+Anything resolvable as a function with the matching arity and returning a `BOOLEAN` return type will work: built-in scalar functions, scalar UDFs registered by another extension, or SQL macros.
+Authentication takes `(VARCHAR, VARCHAR, VARCHAR)`, authorization takes `(VARCHAR, VARCHAR)`.
 
 The callbacks run in a **fresh, transient server-side connection**. That means they can read tables, call other UDFs, and reference extensions, but each invocation starts a new session and cannot rely on session-local state.
 
-Anything resolvable as a function with the matching arity and `→ BOOLEAN` return type will work: built-in scalar functions, scalar UDFs registered by another extension, or SQL macros. Authentication takes `(VARCHAR, VARCHAR, VARCHAR)`; authorization takes `(VARCHAR, VARCHAR)`.
+### Authentication Hook
 
-## Overriding Authentication
+The server invokes the authentication function by issuing the following SQL statement on every `CONNECTION_REQUEST` call:
 
-The cleanest way to plug in custom auth is a `MACRO`. No extension required.
+```sql
+SELECT ⟨quack_authentication_function⟩(⟨session_id⟩, ⟨client_token⟩, ⟨server_token⟩);
+```
 
-### Example: Multi-Token Table
+The arguments are defined as follows:
+
+* `session_id`: Server-generated session id (random 32-char string). Becomes the `quack_connection_id` for that client.
+* `client_token`: The token the client sent.
+* `server_token`: The token configured on the server (via `quack_serve(token := ...)` or auto-generated).
+
+#### Overriding Authentication
+
+The cleanest way to plug in custom authentication is through using a [`MACRO`]({% link docs/current/sql/statements/create_macro.md %}).
+
+##### Example: Multi-Token Table
 
 Authenticate against a small table of allowed tokens (e.g., one per user):
 
@@ -92,22 +88,35 @@ CREATE MACRO check_token(sid, client_token, server_token) AS (
 SET GLOBAL quack_authentication_function = 'check_token';
 ```
 
-Now any client whose token is in `quack_tokens` is admitted; everyone else is rejected. Adding / removing users is a regular `INSERT` / `DELETE`.
+Now any client whose token is in `quack_tokens` is admitted, everyone else is rejected. Adding / removing users is a regular `INSERT` / `DELETE` operation.
 
-### Example: Dev Mode (Always Allow)
+##### Example: Developer Mode (Always Allow)
 
-Useful when iterating locally:
+When developing locally in a sandboxed environment, you can consider using “developer mode” authentication, which allows every incoming connection:
 
 ```sql
-CREATE MACRO yolo_auth(sid, client_token, server_token) AS (true);
-SET GLOBAL quack_authentication_function = 'yolo_auth';
+CREATE MACRO developer_mode_auth(sid, client_token, server_token) AS true;
+SET GLOBAL quack_authentication_function = 'developer_mode_auth';
 ```
 
-## Overriding Authorization
+### Authorization Hook
+
+The server invokes the authorization function by issuing the following SQL statement on every `PREPARE_RESPONSE` call:
+
+```sql
+SELECT ⟨quack_authorization_function⟩(⟨connection_id⟩, ⟨query⟩);
+```
+
+The arguments are defined as follows:
+
+* `connection_id`: The `quack_connection_id` of the calling client (i.e., the same id the authentication hook saw as its `session_id` argument).
+* `query`: The full SQL text the client wants to execute.
+
+#### Overriding Authorization
 
 Authorization runs once per `PREPARE_REQUEST`, with the connection id and the full SQL text. Common shapes:
 
-### Example: Read-Only
+##### Example: Read-Only
 
 ```sql
 CREATE MACRO read_only(sid, query) AS (
@@ -117,9 +126,9 @@ CREATE MACRO read_only(sid, query) AS (
 SET GLOBAL quack_authorization_function = 'read_only';
 ```
 
-### Example: Per-User ACL
+##### Example: Per-User Access Control List
 
-Pair this with a custom auth hook that records `(sid → user)` so authorization can look up who is asking. Because macros can't write, the recording side has to be a scalar UDF; the authorization side can stay a macro:
+Pair this with a custom auth hook that records `(sid → user)` so authorization can look up who is asking. Because macros can't write, the recording side has to be a scalar UDF. The authorization side can be a macro:
 
 ```sql
 -- (populated by the auth UDF when a client connects)
