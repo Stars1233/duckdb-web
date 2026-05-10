@@ -217,4 +217,4 @@ CALL quack_identify(
 ```
 
 `meta` is merged with auto-computed `duckdb_version` and `platform` keys; user-supplied keys win on conflict.
-`whoami_started_at` (an ISO-8601 timestamp) overrides the uptime anchor, otherwise uptime is measured from extension load.
+`whoami_started_at` (an ISO 8601 timestamp) overrides the uptime anchor, otherwise uptime is measured from extension load.

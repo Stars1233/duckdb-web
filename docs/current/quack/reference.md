@@ -73,7 +73,7 @@ These settings back the `whoami()` macro. `quack_identify(...)` is sugar that up
 | `whoami_provider`    | `VARCHAR` | (empty)                              | Deployment provider (`ec2`, `docker`, `local`, ...).      |
 | `whoami_hostname`    | `VARCHAR` | (empty)                              | Network hostname / public address.                        |
 | `whoami_region`      | `VARCHAR` | (empty)                              | Deployment region.                                        |
-| `whoami_started_at`  | `VARCHAR` | (empty)                              | Node start time (ISO-8601 timestamp). Anchors `uptime`.   |
+| `whoami_started_at`  | `VARCHAR` | (empty)                              | Node start time (ISO 8601 timestamp). Anchors `uptime`.   |
 | `whoami_meta`        | `VARCHAR` | `{}`                                 | Provider-specific metadata as JSON.                       |
 | `quack_loaded_at_us` | `BIGINT`  | Epoch microseconds at extension load | Fallback uptime anchor when `whoami_started_at` is empty. |
 
