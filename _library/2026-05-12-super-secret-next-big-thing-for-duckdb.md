@@ -9,8 +9,6 @@ excerpt: ""
 pill: "AI Council 2026"
 ---
 
-## Upcoming Talk
-
 |-------|-------|
 | **Event** | [AI Council 2026](https://aicouncil.com) |
 | **Talk page** | [Super-Secret Next Big Thing for DuckDB](https://aicouncil.com/talks26/super-secret-next-big-thing-for-duckdb) |
@@ -19,5 +17,5 @@ pill: "AI Council 2026"
 
 ## Synopsis
 
-This talk explained the journey of making DuckDB a modern general-purpose database management system.
-It explained previous results (e.g., improving transactional performance and robustness), and it introduced the [DuckDB Quack protocol]({% link quack/index.html %}) that turns DuckDB into a client-server database.
+This talk introduced the [DuckDB Quack protocol]({% link quack/index.html %}), which allows remote DuckDB instances to communicate with each other.
+As a results, Quack turns DuckDB into a client-server database.
