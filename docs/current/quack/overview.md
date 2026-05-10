@@ -21,7 +21,7 @@ In short, the Quack protocol and its interactions work as follows:
 * **Client-driven request and response.** Every interaction is initiated by the client. The server does not initiate interactions via pushing.
 * **`application/duckdb` serialization.** Requests and responses are encoded with DuckDB's internal serialization primitives (the same code path used by the [Write-Ahead Log]({% post_url 2024-10-30-analytics-optimized-concurrent-transactions %}#write-ahead-logging-and-checkpointing)). This avoids round-tripping data through an interchange format and keeps complex types (nested, decimals, intervals, ...) lossless across the wire.
 * **Single round-trip per query.** After the initial connection handshake, a query needs only one request–response pair. Large results stream back in chunks via follow-up `FETCH` requests, optionally parallelized on multiple threads.
-* **Default port: `9494`.** All URIs use the `quack:` scheme, e.g., `quack:hostname:port`.
+* **Default port: `9494`.** All URIs use the `quack:` scheme, e.g., `quack:hostname:port` with the port defaulting to `9494`.
 
 ## Server-Side Usage
 

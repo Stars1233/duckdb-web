@@ -3,11 +3,11 @@ layout: docu
 title: Deploying Quack
 ---
 
-This page collects deployment recipes for running a public-facing Quack server. Today there is one recipe (AWS on EC2); more may be added over time.
+This page collects deployment recipes for running a public-facing Quack server. Today there is one recipe (AWS EC2), we will introduce more over time.
 
-## AWS on EC2
+## On AWS EC2
 
-The fastest way to get a public-facing Quack server is the one-click CloudFormation template maintained alongside the extension. It provisions a small EC2 instance running DuckDB + the quack extension behind nginx + Let's Encrypt TLS, and surfaces the per-instance token and connection URI as stack Outputs.
+The fastest way to get a public-facing Quack server is the one-click [AWS CloudFormation](https://aws.amazon.com/cloudformation/) template maintained alongside the extension. It provisions a small EC2 instance running DuckDB, the quack extension behind nginx and Let's Encrypt TLS. As its output, it surfaces the per-instance token and connection URI.
 
 ### One-Click Launch
 
@@ -61,7 +61,7 @@ FROM quack_query_by_name('remote', 'SELECT current_setting(''threads'')');
 
 When you're done with the instance, delete the stack:
 
-```bash
+```batch
 aws cloudformation delete-stack --stack-name quack-demo --region us-east-1
 ```
 
@@ -69,7 +69,7 @@ Or use the **Delete** button in the CloudFormation console.
 
 ### What the Stack Provisions
 
-* An `AWS::EC2::Instance` from a public AMI (per-region map baked into the template) running DuckDB + the quack extension behind nginx + Let's Encrypt TLS.
+* An `AWS::EC2::Instance` from a public AMI (per-region map baked into the template) running DuckDB, the quack extension behind nginx and the Let's Encrypt TLS.
 * An `AWS::EC2::SecurityGroup` opening ports 80 (ACME challenge) and 443 (HTTPS).
 * An `AWS::CloudFormation::WaitCondition` the instance signals once the RPC server is ready.
 * CFN `Outputs` carrying the ready URI, per-instance token, and two shareable shell.duckdb.org URLs (`QueryURL`, `ConnectURL`).
