@@ -34,6 +34,13 @@ $(document).ready(function(){
 		$('html').toggleClass('darkmode', isDark);
 		$(this).attr('data-mode', isDark ? 'light' : 'dark');
 		localStorage.setItem('mode', isDark ? 'dark' : 'light');
+		if (isDark) {
+			document.documentElement.style.backgroundColor = '#0d0d0d';
+			document.documentElement.style.colorScheme = 'dark';
+		} else {
+			document.documentElement.style.backgroundColor = '';
+			document.documentElement.style.colorScheme = '';
+		}
 		document.documentElement.classList.add('disable-transitions');
 		setTimeout(() => {
 			document.documentElement.classList.remove('disable-transitions');

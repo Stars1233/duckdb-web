@@ -198,7 +198,7 @@ Simply disable the
 buffering using:
 
 ```sql
-CALL enable_logging(storage_path = '/tmp/mylogs', storage_buffer_size = 2048);
+CALL enable_logging(storage_path = '/tmp/mylogs', storage_buffer_size = 0);
 ```
 
 ### Syntactic Sugar
