@@ -111,20 +111,17 @@ body.quack {
 		}
 
 		.quack-protocol-card-meta {
-			display: flex;
-			align-items: center;
-			gap: 20px;
 			padding: 16px 20px;
 
-			.works-with {
+			> div {
 				display: flex;
 				align-items: center;
-				gap: 10px;
-				padding-left: 20px;
-				border-left: 1px solid var(--main-quaternary-color, #ccc);
+				flex-wrap: wrap;
+				gap: 4px;
 			}
 
 			.works-with-label {
+				margin-right: 8px;
 				font-size: var(--type-tiny, 12px);
 				letter-spacing: 0.24px;
 				color: var(--main-text-tertiary-color, #b2b2b2);
@@ -432,7 +429,7 @@ body.quack {
 		display: flex;
 		align-items: center;
 		gap: 5px;
-		padding: 8px 2px 8px 8px;
+		padding: 20px 2px 8px 8px;
 		border-bottom: 1px solid var(--quack-codecard-border);
 		border-top-left-radius: var(--quack-radius-inner);
 		border-top-right-radius: var(--quack-radius-inner);
