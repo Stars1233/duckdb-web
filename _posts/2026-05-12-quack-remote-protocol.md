@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Quack Protocol for DuckDB"
+title: "Quack: The DuckDB Client-Server Protocol"
 author: "Hannes Mühleisen"
 thumb: "/images/blog/thumbs/quack-release.svg"
 image: "/images/blog/thumbs/quack-release.jpg"
