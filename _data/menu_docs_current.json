@@ -987,6 +987,10 @@
               ]
             },
             {
+              "page": "PEG Parser",
+              "url": "peg_parser"
+            },
+            {
               "page": "Samples",
               "url": "samples"
             }
