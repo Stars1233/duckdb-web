@@ -52,7 +52,7 @@ When you do this you should front the server with a TLS-terminating reverse prox
 
 ### URI Format
 
-Quack endpoints use the `quack:` URI scheme and 9494 as the default port. Some examples:
+Quack endpoints use the `quack:` URI scheme and `9494` as the default port. Some examples:
 
 | URI                 | Host        | Port          |
 | ------------------- | ----------- | ------------- |
