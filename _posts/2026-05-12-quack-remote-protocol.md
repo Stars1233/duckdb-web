@@ -172,7 +172,7 @@ We have set up two benchmarks to showcase the Quack protocol. Those benchmarks w
 
 The first benchmark tests bulk transfer, the case where a fairly large number of rows should be transferred over the database protocol. If you’ve read the paper we linked above, you know that this is a case where traditional database protocols were struggling. We compare Quack with two systems: the widespread PostgreSQL protocol and the newer Arrow Flight SQL protocol. Arrow Flight is provided by the [GizmoSQL](https://docs.gizmosql.com/#/) server that also uses DuckDB internally. We transfer an increasing number of rows of the TPC-H lineitem table, all the way up to a whopping 60 million rows (76 GB in CSV format!) and report the median wall clock time over 5 runs. We expect the modern bulk-oriented protocols to far outclass the PostgreSQL protocol. Here are the results:
 
-<div class="caption">Runtimes of bulk transfer operations (lower is better)</div>
+<div class="figure-title">Runtimes of bulk transfer operations (lower is better)</div>
 <img src="{% link images/blog/quack/quack-bulk-light.svg %}" alt="Bulk transfer performance" width="809" height="514" class="lightmode-img" />
 <img src="{% link images/blog/quack/quack-bulk-dark.svg  %}" alt="Bulk transfer performance" width="809" height="514" class="darkmode-img" />
 
@@ -230,7 +230,7 @@ The second benchmark tests small appends. This is a common use case to, for exam
 
 We expect a highly transaction-optimized system like PostgreSQL to dominate this benchmark. We also expect the bulk-optimized Arrow Flight to not do particularly well.
 
-<div class="caption">Throughput of small writes (higher is better)</div>
+<div class="figure-title">Throughput of small writes (higher is better)</div>
 <img src="{% link images/blog/quack/quack-transactional-light.svg %}" alt="Small writes performance" width="800" height="628" class="lightmode-img" />
 <img src="{% link images/blog/quack/quack-transactional-dark.svg  %}" alt="Small writes performance" width="800" height="628" class="darkmode-img" />
 
