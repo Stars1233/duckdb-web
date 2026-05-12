@@ -215,7 +215,7 @@ There are of course a lot of things still to do. First off, we are going to inte
 
 Further on, we are thinking about allowing extensions to the Quack protocol beyond authentication and authorization, for example, by allowing DuckDB extensions to add new protocol messages and the code to handle them. And we are also thinking about adding a replication protocol on top of Quack so that changes to a DuckDB instance can be replicated to other servers, for example to set up a cluster of read replicas.
 
-If you want to hear more about Quack – and learn more about its initial adoption – join our community conference, [DuckCon #7]({% link _events/2026-06-24-duckcon7.html %}), on June 24. DuckCon will start with the [State of the Duck](https://duckdb.org/library/duckcon-opening/) talk presented by the co-creators of DuckDB. You can join either in-person or on the online stream.
+If you want to learn more about Quack – and hear about its initial adoption – join our community conference, [DuckCon #7]({% link _events/2026-06-24-duckcon7.html %}), on June 24. DuckCon will start with the [“State of the Duck”]({% link _library/2026-06-24-duckcon-opening.md %}) talk presented by the co-creators of DuckDB. You can either join in-person or watch the online stream on YouTube.
 
 ## Acknowledgements
 
