@@ -52,7 +52,7 @@
           speaker: "Thomas Visser<br>(Hartwig Medical Foundation)"
         - time: "17:44"
           title: "DuckDB as an analytical runtime: Building local-first analytics apps with SQLRooms"
-          speaker: "Ilya Boyandina<br>(Foursquare / GeoVisually GmbH)"
+          speaker: "Ilya Boyandin<br>(Foursquare / GeoVisually GmbH)"
         - time: "17:50"
           title: "A laptop, a duck, and twenty years of wind: Auditing UK energy policy without a cluster"
           speaker: "Barry Smart<br>(endjin)"
