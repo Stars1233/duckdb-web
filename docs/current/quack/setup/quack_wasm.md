@@ -12,13 +12,20 @@ We provide an example template for initializing a CloudFormation stack, based on
 
 All together, this allows to expose the local `0.0.0.0:1294` port to the public EC2 instance IP via HTTPS.
 
-The template is reachable at <https://duckdb-quack-ami.s3.us-east-1.amazonaws.com/quack.yaml>, and is backed by images for (at the moment) 3 regions:
+The template is reachable at <https://duckdb-quack-ami.s3.us-east-1.amazonaws.com/quack.yaml>, and is backed by images for (at the moment) 8 regions:
 
 * `us-east-1`
 * `us-east-2`
+* `us-west-1`
+* `us-west-2`
 * `eu-central-1`
+* `eu-west-1`
+* `ap-northeast-1`
+* `ap-southeast-1`
 
 Only inputs are the type of the instance (default t3.micro) and the name of the stack (needs to be unique on the same org/region).
+
+> Template is maintained at <https://github.com/duckdb/duckdb-quack-infra>
 
 ### Deploy via Web UI
 
@@ -38,7 +45,25 @@ aws cloudformation create-stack \
   --region us-east-2
 ```
 
-Wait approx. 2 minutes for the deployment to complete.
+Wait approx. 2 minutes for the deployment to complete (this command is blocking):
+
+```bash
+aws cloudformation wait stack-create-complete \
+  --stack-name my-quack-demo \
+  --region us-east-2
+```
+
+Consult the auto-generated outputs:
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name my-quack-demo \
+  --region us-east-2 \
+  --query 'Stacks[0].Outputs' \
+  --output table
+```
+
+Now you can visit the relevant link, that will encode connecting to the just created quack server via DuckDB-Wasm.
 
 ### Destroy
 
