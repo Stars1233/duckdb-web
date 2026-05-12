@@ -257,26 +257,34 @@ curl https://install.duckdb.org | sh
 			</div>
 			<div class="step">
 				<p class="pre-title step-label">Step 2</p>
-				<h3>Install the Quack extension</h3>
+				<h3>Launch Quack on the server</h3>
 {% highlight sql %}
 INSTALL quack FROM core_nightly;
 LOAD quack;
 
--- Confirm it loaded
-SELECT * FROM duckdb_extensions()
-WHERE extension_name = 'quack';
+CALL quack_serve(
+    'quack:localhost',
+    token = 'super_secret'
+);
+
+CREATE TABLE hello AS
+    FROM VALUES ('world') v(s);
 {% endhighlight %}
 			</div>
 			<div class="step">
 				<p class="pre-title step-label">Step 3</p>
-				<h3>Start the server</h3>
-{% highlight bash %}
-duckdb \
-  --server quack \
-  -C /localhost:1234 \
-  my_database.duckdb
+				<h3>Connect from the client</h3>
+{% highlight sql %}
+INSTALL quack FROM core_nightly;
+LOAD quack;
 
-# Listening on quack:localhost:1234
+CREATE SECRET (
+    TYPE quack,
+    TOKEN 'super_secret'
+);
+
+ATTACH 'quack:localhost' AS remote;
+FROM remote.hello;
 {% endhighlight %}
 			</div>
 		</div>
@@ -314,10 +322,6 @@ pip install duckdb
 
 {% endhighlight %}
 			</div>
-		</div>
-
-		<div class="install-more">
-			<a class="button transparent arrow-right" href="#">More clients and versions</a>
 		</div>
 	</div>
 </section>

@@ -68,7 +68,7 @@ FROM remote.hello;
 
 </div>
 
-This should show the content of the remote table hello, `world` in DuckDB #2. Witchcraft! We can also copy data from local to remote:
+This should show the content of the remote table hello, `world` in DuckDB #2. Witchcraft! We can also copy data from the local instance to the remote one:
 
 <div class="duck-diagram" markdown="1">
 
