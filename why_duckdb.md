@@ -15,9 +15,9 @@ There are many database management systems (DBMS) out there. But there is [no on
 
 ### Simple
 
-SQLite is the [world's most widely deployed DBMS](https://www.sqlite.org/mostdeployed.html). Simplicity in installation, and embedded in-process operation are central to its success. DuckDB adopts these ideas of simplicity and embedded operation.
+SQLite is the [world's most widely deployed DBMS](https://www.sqlite.org/mostdeployed.html). Simplicity in installation, and embedded in-process operation are central to its success. DuckDB adopted the ideas of simplicity and in-process operation – but later stepped out of the realm of in-process operations through the [Quack protocol]({% link quack/index.html %}).
 
-DuckDB has **no external dependencies**, neither for compilation nor during run-time. For releases, the entire source tree of DuckDB is compiled into two files, a header and an implementation file, a so-called "amalgamation". This greatly simplifies deployment and integration in other build processes. To build DuckDB, all that is required is a working C++11 compiler.
+DuckDB has **no external dependencies**, neither for compilation nor during run-time. For releases, the entire source tree of DuckDB is compiled into two files, a header and an implementation file, a so-called "amalgamation". This greatly simplifies deployment and integration in other build processes. To build DuckDB, all that is required is a working C++11 compiler (note that DuckDB v2.0 will move to C++17).
 
 For DuckDB, there is no DBMS server software to install, update and maintain. DuckDB does not run as a separate process, but completely **embedded within a host process**. For the analytical use cases that DuckDB targets, this has the additional advantage of **high-speed data transfer** to and from the database. In some cases, DuckDB can process foreign data without copying. For example, the DuckDB Python package can run queries directly on Pandas data without ever importing or copying any data.
 
@@ -25,11 +25,11 @@ For DuckDB, there is no DBMS server software to install, update and maintain. Du
 
 Thanks to having no dependencies, DuckDB is extremely portable. It can be compiled for all major operating systems (Linux, macOS, Windows) and CPU architectures (x86, ARM). It can be deployed from small, resource-constrained edge devices to large multi-terabyte memory servers with 100+ CPU cores. Using [DuckDB-Wasm]({% link docs/current/clients/wasm/overview.md %}), DuckDB can also run in web browsers and even on mobile phones.
 
-DuckDB provides [APIs for Java, C, C++, Go, Node.js and other languages]({% link docs/current/clients/overview.md %}).
+DuckDB provides [APIs for C, C++, Go, Python, R, Rust, Java, Node.js and other languages]({% link docs/current/clients/overview.md %}).
 
 ### Feature-Rich
 
-DuckDB provides serious data management features. There is extensive support for **complex queries** in SQL with a large function library, window functions, etc. DuckDB provides **transactional guarantees** (ACID properties) through our custom, bulk-optimized [Multi-Version Concurrency Control (MVCC)](https://en.wikipedia.org/wiki/Multiversion_concurrency_control). Data can be stored in persistent, **single-file databases**. DuckDB supports secondary indexes to speed up queries trying to find a single table entry.
+DuckDB provides serious data management features. There is extensive support for **complex queries** in SQL with a large function library, window functions, etc. DuckDB provides **transactional guarantees** (ACID properties) through our custom, bulk-optimized [Multi-Version Concurrency Control (MVCC)](https://en.wikipedia.org/wiki/Multiversion_concurrency_control). Data can be stored in DuckDB's native format, a **single-file database** or in one of the supported [lakehouse formats]({% link docs/current/lakehouse_formats.md %}). DuckDB's native format supports secondary indexes to speed up queries trying to find a single table entry, while lakehouse formats, including the [DuckLake format](https://ducklake.select/) can scale up to petabytes of data.
 
 DuckDB is deeply integrated into Python and R for efficient interactive data analysis.
 
@@ -56,13 +56,13 @@ In addition to this test suite, we run various tests that stress DuckDB under he
 
 ## Peer-Reviewed Papers and Thesis Works
 
-* [Runtime-Extensible Parsers]({% link pdf/CIDR2025-muehleisen-raasveldt-extensible-parsers.pdf %}) (CIDR 2025)
-* [Robust External Hash Aggregation in the Solid State Age]({% link pdf/ICDE2024-kuiper-boncz-muehleisen-out-of-core.pdf %}) (ICDE 2024)
-* [These Rows Are Made for Sorting and That's Just What We'll Do]({% link pdf/ICDE2023-kuiper-muehleisen-sorting.pdf %}) (ICDE 2023)
+* [Runtime-Extensible Parsers]({% link _library/2025-01-19-runtime-extensible-parsers.md %}) (CIDR 2025)
+* [Robust External Hash Aggregation in the Solid State Age]({% link _library/2024-04-13-robust-external-hash-aggregation.md %}) (ICDE 2024)
+* [These Rows Are Made for Sorting and That's Just What We'll Do]({% link _library/2023-04-03-sorting.md %}) (ICDE 2023)
 * [Join Order Optimization with (Almost) No Statistics](https://blobs.duckdb.org/papers/tom-ebergen-msc-thesis-join-order-optimization-with-almost-no-statistics.pdf) (Master thesis, 2022)
-* [DuckDB-Wasm: Fast Analytical Processing for the Web]({% link pdf/VLDB2022-kohn-duckdb-wasm.pdf %}) (VLDB 2022 Demo)
-* [Data Management for Data Science - Towards Embedded Analytics]({% link pdf/CIDR2020-raasveldt-muehleisen-duckdb.pdf %}) (CIDR 2020)
-* [DuckDB: an Embeddable Analytical Database]({% link pdf/SIGMOD2019-demo-duckdb.pdf %}) (SIGMOD 2019 Demo)
+* [DuckDB-Wasm: Fast Analytical Processing for the Web]({% link _library/2022-09-05-duckdb-wasm.md %}) (VLDB 2022 demo)
+* [Data Management for Data Science - Towards Embedded Analytics]({% link _library/2020-01-12-embedded-analytics.md %}) (CIDR 2020)
+* [DuckDB: An Embeddable Analytical Database]({% link _library/2019-06-30-duckdb.md %}) (SIGMOD 2019 demo)
 
 ## Projects Built with/for DuckDB
 
