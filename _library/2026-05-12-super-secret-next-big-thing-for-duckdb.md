@@ -6,6 +6,7 @@ tags: ["Talk"]
 thirdparty: false
 highlighted: false
 excerpt: ""
+length: "30 min"
 pill: "AI Council 2026"
 ---
 
