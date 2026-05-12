@@ -1265,8 +1265,16 @@
                 {
                   "page": "Deployment",
                   "url": "deployment"
+                },
+                {
+                  "page": "Using from Wasm",
+                  "url": "quack_wasm"
                 }
               ]
+            },
+            {
+              "page": "Troubleshooting",
+              "url": "troubleshooting"
             }
           ]
         },
