@@ -138,7 +138,7 @@ Of course there is much more to see here. Please [consult our documentation]({% 
 
 ### HTTP-Based
 
-Quack is built straight on the venerable HTTP, the Hypertext Transfer Protocol. From its humble beginnings at CERN, HTTP has become a de-facto protocol layer on top of TCP and all the stuff below. The entire stack is optimized to transmit HTTP message streams efficiently. The protocol has surprisingly low overhead if implemented properly. Everyone and their little brother knows how to deal with HTTP in load balancing, authentication, firewalls, intrusion detection etc. It would be rather misguided not to build a database protocol on top of HTTP in 2026. HTTP also allows the DuckDB-Wasm distribution to speak Quack natively! So DuckDB running in a browser can e.g., directly connect to a DuckDB instance running in an EC2 server using Quack.
+Quack is built straight on the venerable HTTP, the Hypertext Transfer Protocol. From its humble beginnings at CERN, HTTP has become a de-facto protocol layer on top of TCP and all the stuff below. The entire stack is optimized to transmit HTTP message streams efficiently. The protocol has surprisingly low overhead if implemented properly. Everyone and their little brother knows how to deal with HTTP in load balancing, authentication, firewalls, intrusion detection etc. It would be rather misguided not to build a database protocol on top of HTTP in 2026. HTTP also allows the [DuckDB-Wasm distribution to speak Quack natively]({% link docs/current/quack/setup/quack_wasm.md %})! So DuckDB running in a browser can e.g., directly connect to a DuckDB instance running in an EC2 server using Quack.
 
 ### Request-Response Pattern
 
