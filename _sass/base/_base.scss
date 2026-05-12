@@ -73,14 +73,20 @@ em.caption{
 	color: var(--main-text-tertiary-color);
 }
 
+.figure-title{
+	@include title-2();
+	margin-bottom: 12px;
+}
+
+.figure-title + p{
+	margin-top: 0!important;
+}
 
 
 .icon-24{
 	width: 24px;
 	height: 24px;
 }
-
-
 
 
 
