@@ -45,8 +45,25 @@ aws cloudformation create-stack \
   --region us-east-2
 ```
 
-Wait approx. 2 minutes for the deployment to complete.
+Wait approx. 2 minutes for the deployment to complete (this command is blocking):
 
+```bash
+aws cloudformation wait stack-create-complete \
+  --stack-name my-quack-demo \
+  --region us-east-2
+```
+
+Consult the auto-generated outputs:
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name my-quack-demo \
+  --region us-east-2 \
+  --query 'Stacks[0].Outputs' \
+  --output table
+```
+
+Now you can visit the relevant link, that will encode connecting to the just created quack server via DuckDB-Wasm.
 
 ### Destroy
 
