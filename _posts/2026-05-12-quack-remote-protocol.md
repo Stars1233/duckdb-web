@@ -80,7 +80,7 @@ This should show the content of the remote table hello, `world` in DuckDB #2. Wi
 
 
 
--- step two
+-- Step two
 FROM hello2;
 ```
 
@@ -93,7 +93,7 @@ FROM hello2;
 #### <svg class="icon"><use href="#database-01"></use></svg> DuckDB #2
 
 ```sql
--- step one
+-- Step one
 CREATE TABLE remote.hello2 AS
     FROM VALUES ('world2') v(s);
 ```
@@ -110,7 +110,8 @@ Similarly, you should see `world2` in the output on DuckDB #1. Obviously those a
 
 #### <svg class="icon"><use href="#database-01"></use></svg> DuckDB #1
 
-```text
+```sql
+-- Waiting to serve data
 ```
 
 </div>
@@ -171,12 +172,55 @@ We have set up two benchmarks to showcase the Quack protocol. Those benchmarks w
 
 The first benchmark tests bulk transfer, the case where a fairly large number of rows should be transferred over the database protocol. If you’ve read the paper we linked above, you know that this is a case where traditional database protocols were struggling. We compare Quack with two systems: the widespread PostgreSQL protocol and the newer Arrow Flight SQL protocol. Arrow Flight is provided by the [GizmoSQL](https://docs.gizmosql.com/#/) server that also uses DuckDB internally. We transfer an increasing number of rows of the TPC-H lineitem table, all the way up to a whopping 60 million rows (76 GB in CSV format!) and report the median wall clock time over 5 runs. We expect the modern bulk-oriented protocols to far outclass the PostgreSQL protocol. Here are the results:
 
-| Rows | DuckDB Quack | Arrow Flight SQL | PostgreSQL |
-| ---: | -----------: | ---------------: | ---------: |
-| 100k |   **0.07 s** |       **0.07 s** |     0.20 s |
-| 1M   |   **0.24 s** |           0.38 s |     2.20 s |
-| 10M  |   **0.89 s** |           2.90 s |    25.64 s |
-| ~60M |   **4.94 s** |          17.40 s |   158.37 s |
+{% comment %}
+<img src="{% link images/blog/quack-bulk-transfer-light.svg %}" alt="Bulk transfer performance" width="" height="" class="lightmode-img" />
+<img src="{% link images/blog/quack-bulk-transfer-dark.svg  %}" alt="Bulk transfer performance" width="" height="" class="darkmode-img" />
+<div>Bulk transfer performance. Lower is better</div>
+{% endcomment %}
+
+<details markdown='1'>
+<summary markdown='span'>
+Would you like to see the results as a table? Click here.
+</summary>
+<div>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Rows</th>
+<th style="text-align: right;">DuckDB Quack</th>
+<th style="text-align: right;">Arrow Flight</th>
+<th style="text-align: right;">PostgreSQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">100k</td>
+<td style="text-align: right;"><strong>0.07 s</strong></td>
+<td style="text-align: right;"><strong>0.07 s</strong></td>
+<td style="text-align: right;">0.20 s</td>
+</tr>
+<tr>
+<td style="text-align: right;">1M</td>
+<td style="text-align: right;"><strong>0.24 s</strong></td>
+<td style="text-align: right;">0.38 s</td>
+<td style="text-align: right;">2.20 s</td>
+</tr>
+<tr>
+<td style="text-align: right;">10M</td>
+<td style="text-align: right;"><strong>0.89 s</strong></td>
+<td style="text-align: right;">2.90 s</td>
+<td style="text-align: right;">25.64 s</td>
+</tr>
+<tr>
+<td style="text-align: right;">60M</td>
+<td style="text-align: right;"><strong>4.94 s</strong></td>
+<td style="text-align: right;">17.40 s</td>
+<td style="text-align: right;">158.37 s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
 
 We can see how Quack is doing great for bulk result set transfer, transferring the 60 million rows in under 5 seconds! Even the purpose-built Arrow Flight SQL protocol can’t compete here, and Postgres’ row-based protocol is rather hopeless in general.
 
@@ -188,12 +232,55 @@ The second benchmark tests small appends. This is a common use case to, for exam
 
 We expect a highly transaction-optimized system like PostgreSQL to dominate this benchmark. We also expect the bulk-optimized Arrow Flight to not do particularly well.
 
-| Threads |   DuckDB Quack | Arrow Flight SQL | PostgreSQL |
-| ------: | -------------: | ---------------: | ---------: |
-| 1       | **1,038 tx/s** |         469 tx/s |   839 tx/s |
-| 2       | **1,956 tx/s** |         799 tx/s | 1,094 tx/s |
-| 4       | **3,504 tx/s** |       1,224 tx/s | 2,180 tx/s |
-| 8       | **5,434 tx/s** |       1,358 tx/s | 4,320 tx/s |
+{% comment %}
+<img src="{% link images/blog/quack-small-writes-light.svg %}" alt="Small writes performance" width="" height="" class="lightmode-img" />
+<img src="{% link images/blog/quack-small-writes-dark.svg  %}" alt="Small writes performance" width="" height="" class="darkmode-img" />
+<div>Small writes performance. Higher is better</div>
+{% endcomment %}
+
+<details markdown='1'>
+<summary markdown='span'>
+Would you like to see the results as a table? Click here.
+</summary>
+<div>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Threads</th>
+<th style="text-align: right;">DuckDB Quack</th>
+<th style="text-align: right;">Arrow Flight</th>
+<th style="text-align: right;">PostgreSQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><strong>1,038 tx/s</strong></td>
+<td style="text-align: right;">469 tx/s</td>
+<td style="text-align: right;">839 tx/s</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;"><strong>1,956 tx/s</strong></td>
+<td style="text-align: right;">799 tx/s</td>
+<td style="text-align: right;">1,094 tx/s</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;"><strong>3,504 tx/s</strong></td>
+<td style="text-align: right;">1,224 tx/s</td>
+<td style="text-align: right;">2,180 tx/s</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;"><strong>5,434 tx/s</strong></td>
+<td style="text-align: right;">1,358 tx/s</td>
+<td style="text-align: right;">4,320 tx/s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
 
 Quite surprisingly, we see Quack outperforming PostgreSQL up to 8 parallel threads to a maximum transaction rate of around 5,500 transactions per second. Beyond that, we hit a current limitation of DuckDB itself in concurrent insertions per second into the same table. PostgreSQL scales better here, which is something to look into for us in the near future. Arrow Flight is not doing too well, being roughly half as fast as Postgres, as expected.
 
