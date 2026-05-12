@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Quack: The DuckDB Client-Server Protocol"
-author: "Hannes Mühleisen"
+author: "The DuckDB team"
 thumb: "/images/blog/thumbs/quack-release.svg"
 image: "/images/blog/thumbs/quack-release.jpg"
 excerpt: "DuckDB instances can now talk to each other using the `quack:` protocol, which lets you run DuckDB in a client-server setup. We optimized `quack:` for performance so it's suitable for both bulk operations and small transactions."
