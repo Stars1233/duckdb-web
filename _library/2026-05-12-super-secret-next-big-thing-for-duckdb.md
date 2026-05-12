@@ -9,6 +9,10 @@ excerpt: ""
 pill: "AI Council 2026"
 ---
 
+<div class="video-container">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/RQBhuL9Ve8g?si=S4_5KZAA1NdlLDMr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
 |-------|-------|
 | **Event** | [AI Council 2026](https://aicouncil.com) |
 | **Talk page** | [Super-Secret Next Big Thing for DuckDB](https://aicouncil.com/talks26/super-secret-next-big-thing-for-duckdb) |

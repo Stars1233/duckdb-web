@@ -8,6 +8,10 @@ excerpt: "DuckDB instances can now talk to each other using the Quack remote pro
 tags: ["release"]
 ---
 
+<div class="video-container">
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/RQBhuL9Ve8g?si=S4_5KZAA1NdlLDMr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
 ## Background: Database Architectures
 
 When databases first emerged, there was no distinction between a ‘client’ and a ‘server’, the whole database just ran on a single computer. Somewhere in the 80s, [Sybase](https://en.wikipedia.org/wiki/Sybase) was the first to introduce the concept of a database ‘server’ and a ‘client’ running on different computers. Ever since, it was just assumed that every database system used a client-server architecture along with a communication protocol to talk between those. This was convenient, because the single mutable state stays in a single place under the control of a server, and there can be many clients at the same time reading and writing data. There are of course drawbacks to this method, most notably, those protocols can add a significant amount of overhead. If you’re curious to read more, we [wrote a research paper]({% link _library/2017-08-28-dont-hold-my-data-hostage.md %}) on database protocols a while back.
