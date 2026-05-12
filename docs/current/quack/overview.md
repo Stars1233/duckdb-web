@@ -6,6 +6,8 @@ redirect_from:
 title: Quack Remote Protocol
 ---
 
+> We released Quack on May 12, 2026. Read the [announcement blog post]({% post_url 2026-05-12-quack-remote-protocol %})!
+
 The Quack extension turns a DuckDB instance into a server that other DuckDB instances (clients) can connect to over HTTP.
 
 This page covers the protocol at a glance and walks through basic usage on both sides of the wire.
