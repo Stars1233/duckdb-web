@@ -300,6 +300,8 @@ Further on, we are thinking about allowing extensions to the Quack protocol beyo
 
 If you want to learn more about Quack – and hear about its initial adoption – join our community conference, [DuckCon #7]({% link _events/2026-06-24-duckcon7.html %}), on June 24. DuckCon will start with the [“State of the Duck”]({% link _library/2026-06-24-duckcon-opening.md %}) talk presented by the co-creators of DuckDB. You can either join in-person or watch the online stream on YouTube.
 
+PS: We have a separate page for the [Quack project]({% link quack/index.html %}), make sure you give it a visit.
+
 ## Acknowledgements
 
 We would like to thank Boaz Leskes from [MotherDuck](https://motherduck.com/) for sharing their lessons learned from building the MotherDuck protocol with us. We also want to thank Philip Moore from [GizmoSQL / GizmoData](https://gizmodata.com/gizmosql), who has blazed this trail for us already and shown that client-server DuckDB is a very worthwhile thing.
