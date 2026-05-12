@@ -495,7 +495,7 @@ $('a').filter(function() {
 	return this.hostname && this.hostname !== location.hostname && $(this).find('img').length === 0 && !$(this).hasClass('button');
 }).addClass("externallink").attr('target','_blank');
 
-$('.headercontent a, .mainlinks a, .box-link a, .footercontent a, .highlight a, .button, .ecosystem-diagram a, .quack-protocol-card-meta a').removeClass('externallink');
+$('.headercontent a, .mainlinks a, .box-link a, .footercontent a, .highlight a, .button, .ecosystem-diagram a, a.tag, a:has(> .tag)').removeClass('externallink');
 $('table a.externallink:contains(GitHub)').removeClass('externallink').addClass('nobg'); 
 $('.supporterboard a.externallink').removeClass('externallink').addClass('nobg'); 
 
