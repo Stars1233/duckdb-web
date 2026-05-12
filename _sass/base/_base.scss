@@ -75,7 +75,7 @@ em.caption{
 
 .figure-title{
 	@include title-2();
-	margin-bottom: 0em;
+	margin-bottom: 12px;
 }
 
 .figure-title + p{
