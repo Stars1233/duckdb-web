@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Super-Secret Next Big Thing for DuckDB"
+title: "Quack: The Super-Secret Next Big Thing for DuckDB"
 author: "Hannes Mühleisen"
 tags: ["Talk"]
 thirdparty: false

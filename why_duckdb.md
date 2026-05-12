@@ -59,7 +59,7 @@ In addition to this test suite, we run various tests that stress DuckDB under he
 * [Runtime-Extensible Parsers]({% link _library/2025-01-19-runtime-extensible-parsers.md %}) (CIDR 2025)
 * [Robust External Hash Aggregation in the Solid State Age]({% link _library/2024-04-13-robust-external-hash-aggregation.md %}) (ICDE 2024)
 * [These Rows Are Made for Sorting and That's Just What We'll Do]({% link _library/2023-04-03-sorting.md %}) (ICDE 2023)
-* [Join Order Optimization with (Almost) No Statistics](https://blobs.duckdb.org/papers/tom-ebergen-msc-thesis-join-order-optimization-with-almost-no-statistics.pdf) (Master thesis, 2022)
+* [Join Order Optimization with (Almost) No Statistics]({% link _library/2022-01-01-join-order-optimization-with-almost-no-statistics.md %}) (Master thesis, 2022)
 * [DuckDB-Wasm: Fast Analytical Processing for the Web]({% link _library/2022-09-05-duckdb-wasm.md %}) (VLDB 2022 demo)
 * [Data Management for Data Science - Towards Embedded Analytics]({% link _library/2020-01-12-embedded-analytics.md %}) (CIDR 2020)
 * [DuckDB: An Embeddable Analytical Database]({% link _library/2019-06-30-duckdb.md %}) (SIGMOD 2019 demo)
