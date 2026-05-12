@@ -321,8 +321,10 @@ pip install duckdb
 				<p class="pre-title step-label">Step 1</p>
 				<h3>Deploy via CloudFormation</h3>
 {% highlight bash %}
-# TODO: AWS CloudFormation template
-
+aws cloudformation create-stack \
+  --stack-name my-quack-demo \
+  --template-url https://duckdb-quack-ami.s3.us-east-1.amazonaws.com/quack.yaml \
+  --region us-east-2
 {% endhighlight %}
 			</div>
 		</div>
