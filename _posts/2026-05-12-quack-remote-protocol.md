@@ -4,7 +4,7 @@ title: "Quack: The DuckDB Client-Server Protocol"
 author: "The DuckDB team"
 thumb: "/images/blog/thumbs/quack-release.svg"
 image: "/images/blog/thumbs/quack-release.jpg"
-excerpt: "DuckDB instances can now talk to each other using the `quack:` protocol, which lets you run DuckDB in a client-server setup. We optimized `quack:` for performance so it's suitable for both bulk operations and small transactions."
+excerpt: "DuckDB instances can now talk to each other using the Quack remote protocol. This lets you run DuckDB in a client-server setup with multiple concurrent writers. In DuckDB's spirit, Quack is *simple* to set up and builds on proven technologies such as HTTP(S). It's also fast, which allows it to support workloads ranging from bulk operations to small transactions."
 tags: ["release"]
 ---
 
@@ -150,7 +150,7 @@ Requests and responses are encoded using the new MIME type application/duckdb. T
 
 ### Encryption
 
-While we want Quack to “just work” we also are wary of the security nightmares of attaching a database directly to the evil internet, as has happened before. This is why Quack will by default generate a random authentication token at server start-up, which then has to be given to the client. In addition, the Quack server will by default only bind to localhost (which can of course be overridden). Quack does not use SSL by default, because it is a bit silly to bring all that infrastructure and add dependencies just for localhost communication. We do not recommend opening up a DuckDB Quack endpoint directly to the Internet. Instead we strongly recommend that you use a common HTTP endpoint like nginx if you should choose to expose Quack to the World Wide Web and have that proxy terminate SSL (e.g., with Let's Encrypt). The Quack client will assume SSL is enabled for non-local connections, this can be overridden. We provide a [guide for this in our documentation]({% link docs/current/quack/setup/reverse_proxy.md %}).
+While we want Quack to “just work” we also are wary of the security nightmares of attaching a database directly to the evil internet, as has happened before. This is why Quack will by default generate a random authentication token at server start-up, which then has to be given to the client. In addition, the Quack server will by default only bind to localhost (which can of course be overridden). Quack does not use SSL by default, because it is a bit silly to bring all that infrastructure and add dependencies just for localhost communication. We do not recommend opening up a DuckDB Quack endpoint directly to the Internet. Instead we strongly recommend that you use a common HTTP endpoint like [nginx](https://nginx.org/) if you should choose to expose Quack to the World Wide Web and have that proxy terminate SSL (e.g., with Let's Encrypt). The Quack client will assume SSL is enabled for non-local connections, this can be overridden. We provide a [guide for this in our documentation]({% link docs/current/quack/setup/reverse_proxy.md %}).
 
 ### Round-Trips
 
