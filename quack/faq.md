@@ -328,7 +328,10 @@ Yes, we have [experimental support for using DuckDB with Quack as a catalog data
 
 Quack is a protocol that allows remote access to a DuckDB server. It's an MIT-licensed open-source solution that you can run in a self-hosted environment or in the cloud.
 
-MotherDuck provides a fully managed database-as-a-service in the cloud. As such, it also allows remote access among other features of a managed database (central user management, backups, etc.) and other advanced features such as [dual execution](https://motherduck.com/docs/key-tasks/running-hybrid-queries/) (currently not supported by Quack). MotherDuck uses DuckDB both on the client side and on the server side but it employs its own protocol for communication. When building Quack, [we incorporated lessons from the MotherDuck team learned](http://duckdb.org/2026/05/12/quack-remote-protocol#acknowledgements) into building our protocol.
+MotherDuck provides a fully managed database-as-a-service in the cloud. As such, it also allows remote access among other features of a managed database (central user management, backups, etc.) and other advanced features such as [dual execution](https://motherduck.com/docs/key-tasks/running-hybrid-queries/) (a feature that is currently not supported by Quack).
+MotherDuck uses DuckDB both on the client side and on the server side but it employs its own protocol for communication.
+When building Quack, [we incorporated lessons from the MotherDuck team learned](http://duckdb.org/2026/05/12/quack-remote-protocol#acknowledgements) into building our protocol.
+To learn about MotherDuck's plans with Quack, check out the “Quacking On” section of the [their blog post on Quack](https://motherduck.com/blog/duckdb-client-server/#quacking-on)
 
 </div>
 
