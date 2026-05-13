@@ -312,7 +312,7 @@ Quack and DuckLake can be combined in different combinations. For example, if yo
 
 <div class="answer" markdown="1">
 
-Not yet, but we are working on it!
+Yes, we have [experimental support for using DuckDB with Quack as a catalog database](https://github.com/duckdb/ducklake/pull/1151).
 
 </div>
 
