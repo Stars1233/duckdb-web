@@ -47,6 +47,7 @@ body.quack {
 
 		.hero-buttons {
 			display: flex;
+			flex-wrap: wrap;
 			gap: 8px;
 			justify-content: center;
 
