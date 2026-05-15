@@ -28,6 +28,8 @@ The vast number of workarounds people built to bolt a client-server solution ont
 
 What do two (or more) ducks do if they want to talk to each other? They [quack](https://en.wikipedia.org/wiki/Duck#Communication)! So it is quite natural that we need to call the protocol that two DuckDB instances can use to talk to each other “Quack”, too! We had the opportunity to design a database protocol from scratch in 2026 without having to consider any legacy, which is quite a luxury. We were able to learn from the existing protocols, including the more recent Arrow Flight SQL and others. Before we dive into how Quack works internally, let's see how it works from a user perspective. First, you need two DuckDB instances. That’s right, DuckDB will act both as a client and as a server! The two instances can be on different computers a world apart (or in space) or just two different terminal windows on your laptop. First, we need to install the Quack extension in both DuckDB instances. For now, Quack lives in the `core_nightly` repository and is available in [DuckDB v1.5.2]({% link install/index.html %}), the current release version:
 
+<!-- markdownlint-disable MD001 -->
+
 <div class="duck-diagram" markdown="1">
 
 <div class="duck-diagram-box" markdown="1">
@@ -72,7 +74,11 @@ FROM remote.hello;
 
 </div>
 
+<!-- markdownlint-enable MD001 -->
+
 This should show the content of the remote table hello, `world` in DuckDB #2. Witchcraft! We can also copy data from the local instance to the remote one:
+
+<!-- markdownlint-disable MD001 -->
 
 <div class="duck-diagram" markdown="1">
 
@@ -106,7 +112,11 @@ CREATE TABLE remote.hello2 AS
 
 </div>
 
+<!-- markdownlint-enable MD001 -->
+
 Similarly, you should see `world2` in the output on DuckDB #1. Obviously those are the most basic examples we can think of. Tables can be much more complex, queries can be much more complex, data volumes can be quite vast (see below). There is also a way to just ship an entire verbatim query to the remote side using the `query` function, which is better for very complex queries on large datasets and offers more control over what exactly is executed remotely:
+
+<!-- markdownlint-disable MD001 -->
 
 <div class="duck-diagram" markdown="1">
 
@@ -135,6 +145,8 @@ FROM remote.query(
 </div>
 
 </div>
+
+<!-- markdownlint-enable MD001 -->
 
 Of course there is much more to see here. Please [consult our documentation]({% link docs/current/quack/overview.md %}) for more details.
 
