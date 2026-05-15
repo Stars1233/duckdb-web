@@ -96,7 +96,7 @@ To query a local database via HTTP, run:
 ```sql
 FROM quack_query(
     'quack:localhost',
-    'SELECT 42'
+    'SELECT 42',
     token = '⟨MY_QUACK_TOKEN_01234567890ABCDEF⟩');
 ```
 
