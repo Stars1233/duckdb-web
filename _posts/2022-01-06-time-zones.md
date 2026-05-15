@@ -19,7 +19,7 @@ In this post, we will describe how time works in DuckDB and what time zone funct
 > People assume that time is a strict progression of cause to effect,
 > but actually from a non-linear, non-subjective viewpoint
 > it’s more like a big ball of wibbly wobbly timey wimey stuff.  
->  -- Doctor Who: Blink
+> -- Doctor Who: Blink
 
 Time in databases can be very confusing because the way we talk about time is itself confusing.
 Local time, GMT, UTC, time zones, leap years, proleptic Gregorian calendars – it all looks like a big mess.
