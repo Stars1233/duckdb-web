@@ -8,7 +8,6 @@
 body.quack {
 
 	main {
-		--quack-section-padding-y: 75px;
 		--quack-codecard-bg: var(--doc-codebox-background-color, #f2f2f2);
 		--quack-codecard-border: var(--doc-codebox-border-color, #e6e6e6);
 		--quack-step-label-color: var(--main-benefit-icon-color, #998b00);
@@ -238,7 +237,7 @@ body.quack {
 	.quack-faq,
 	.quack-ecosystem,
 	.quack-introducing {
-		padding: var(--quack-section-padding-y) 0px;
+		padding: 75px 0;
 	}
 
 	/* ----- Architecture diagram ----- */
@@ -650,6 +649,31 @@ body.quack {
 			.step:first-child {
 				grid-column: auto;
 			}
+		}
+
+		.quack-introducing .wrap {
+			flex-direction: column;
+		}
+
+		.hero-subtitle br {
+			display: none;
+		}
+
+		.quack-hero {
+			padding: 50px 0px 50px
+		}
+
+		.quack-architecture,
+		.quack-howitworks,
+		.quack-install,
+		.quack-faq,
+		.quack-ecosystem,
+		.quack-introducing {
+			padding: 40px 0;
+		}
+
+		.section-title {
+			margin-bottom: 36px;
 		}
 	}
 }
