@@ -290,7 +290,7 @@ However, Quack and DuckLake are also fundamentally different.
 
 **Relation to DuckDB:**
   * Quack is exclusive to DuckDB as it allows DuckDB processes to communicate. 
-  * The DuckLake format is not exclusive to DuckDB: they can be [created, read and updated via different clients](https://ducklake.select/docs/stable/#list-of-ducklake-clients).
+  * The DuckLake format is not exclusive to DuckDB: DuckLakes can be [created, read and updated via different clients](https://ducklake.select/docs/stable/#list-of-ducklake-clients).
 * **Storage:**
   * Quack allows you to run a DuckDB server that uses DuckDB's native database format for storage. This allows you to scale up to a few terabytes.
   * DuckLake stores the data on object storage, which allows it to store huge, potentially petabyte-scale datasets.
