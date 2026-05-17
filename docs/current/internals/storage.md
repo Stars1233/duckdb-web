@@ -61,6 +61,12 @@ With the [command line client]({% link docs/current/clients/cli/overview.md %}),
 duckdb -storage-version v1.2.0 my_database.duckdb
 ```
 
+To create a databse with the latest storage version, use:
+
+```batch
+duckdb -storage-version latest my_database.duckdb
+```
+
 The storage version setting specifies the minimum DuckDB version that should be able to read the database file. When database files are written with this option, the resulting files cannot be opened by older DuckDB released versions than the specified version. They can be read by the specified version and all newer versions of DuckDB.
 
 If you attach to DuckDB databases, you can query the storage versions using the following command:
